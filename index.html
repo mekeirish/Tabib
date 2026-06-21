@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <style>
-    /* ===== CSS inchangé (version complète) ===== */
+    /* ===== CSS global (inchangé) ===== */
     :root {
       --bg: #ecfdf5; --card: #ffffff; --card-border: #d1fae5;
       --primary: #059669; --primary-light: #10b981; --primary-dark: #047857;
@@ -42,6 +42,130 @@
     .btn-circle { width: 38px; height: 38px; border-radius: 999px; color: white; font-size: 1rem; }
     .btn-circle:active, .btn-action:active { transform: scale(0.95); }
 
+    .btn-action-sm {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: none;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .btn-action-sm:active { transform: scale(0.95); }
+    .bg-success { background: var(--success); }
+    .bg-danger { background: var(--danger); }
+    .bg-secondary { background: var(--secondary); }
+    .bg-warning { background: var(--warning); color: black; }
+    .bg-gray { background: #6b7280; color: white; }
+
+    .rdv-card {
+      background: #f9fafb;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 10px;
+      transition: 0.2s;
+    }
+    .rdv-card:hover { border-color: var(--primary-light); }
+    .rdv-header { display: flex; justify-content: space-between; align-items: center; }
+    .rdv-header strong { font-size: 1rem; }
+    .rdv-status {
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .rdv-status.pending { background: #fef3c7; color: #92400e; }
+    .rdv-status.valid { background: #d1fae5; color: #065f46; }
+    .rdv-details {
+      display: flex;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin: 4px 0 8px;
+      flex-wrap: wrap;
+    }
+    .rdv-details i { margin-right: 4px; }
+    .rdv-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Styles pour l'historique */
+    .history-day {
+      margin-top: 16px;
+    }
+    .history-day h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+    .history-item {
+      background: white;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .history-item .patient-info {
+      flex: 1;
+    }
+    .history-item .patient-info strong {
+      font-size: 0.95rem;
+    }
+    .history-item .patient-info small {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      display: block;
+    }
+    .history-item .history-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .history-item .history-actions .btn-circle {
+      width: 32px;
+      height: 32px;
+      font-size: 0.8rem;
+    }
+    .history-confirmed {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-left: 8px;
+    }
+
+    .doc-stats {
+      background: white;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-around;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+    .doc-stats strong { color: var(--primary); }
+
+    .cal-legend {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 6px;
+      padding: 6px;
+      background: #f9fafb;
+      border-radius: 999px;
+    }
+    .cal-legend span { margin: 0 8px; }
+
     .screen { display: none; overflow-y: auto; padding: 16px; flex-grow: 1; padding-bottom: 90px; background: var(--bg); }
     .screen.active { display: block; }
 
@@ -59,11 +183,12 @@
     input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15); }
 
     .manage-item { background: #f9fafb; padding: 14px 16px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e5e7eb; }
-    .spec-card { background: white; padding: 24px 12px; border-radius: var(--radius); border: 1px solid #e5e7eb; cursor: pointer; box-shadow: var(--shadow); transition: 0.2s; }
+    .spec-card { background: white; padding: 24px 12px; border-radius: var(--radius); border: 1px solid #e5e7eb; cursor: pointer; box-shadow: var(--shadow); transition: 0.2s; text-align: center; }
     .spec-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--primary-light); }
     .spec-card i { font-size: 2.4rem; color: var(--primary); margin-bottom: 12px; display: block; }
+    .spec-card b { display: block; margin-bottom: 4px; }
 
-    .badge-count { background: var(--primary); color: white; padding: 2px 10px; border-radius: 999px; font-weight: 700; font-size: 0.75rem; min-width: 24px; text-align: center; }
+    .badge-count { background: var(--primary); color: white; padding: 2px 10px; border-radius: 999px; font-weight: 700; font-size: 0.75rem; min-width: 24px; text-align: center; display: inline-block; }
     .dot-notif { height: 10px; width: 10px; background-color: #ef4444; border-radius: 999px; display: inline-block; margin-right: 6px; box-shadow: 0 0 0 2px white; }
 
     table { width: 100%; border-collapse: collapse; background: white; border-radius: var(--radius); overflow: hidden; margin-top: 12px; box-shadow: var(--shadow); }
@@ -88,13 +213,33 @@
     .bg-danger { background: var(--danger); } .bg-success { background: var(--success); } .bg-warning { background: var(--warning); color: black; } .bg-accent { background: var(--secondary); } .bg-gray { background: #6b7280; color: white; }
     small, .text-muted { color: var(--text-muted); }
     ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
+
+    .btn-delete-user {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0 4px;
+      transition: 0.2s;
+    }
+    .btn-delete-user:hover {
+      color: var(--danger);
+    }
+
+    /* Amélioration historique */
+    .history-count {
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .history-item .patient-info .confirm-date {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
   </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#059669">
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#4b6cb7">
-<link rel="apple-touch-icon" href="icon.png"></head>
+</head>
 <body oncontextmenu="return false;"> 
 <div id="notificationBar" class="text-xs">Message</div>
 
@@ -118,28 +263,45 @@
     <div class="numpad" id="numpadContainer"></div>
 </div>
 
+<!-- ===== PAGE MÉDECIN ===== -->
 <div id="pageDocSpace" class="screen">
     <h2 id="docSpaceName" class="text-center text-primary font-bold mt-0 mb-3"></h2>
+    <div class="doc-stats" id="docStats">
+        <span>📅 Aujourd’hui : <strong id="todayCount">0</strong> RDV</span>
+        <span>⏳ En attente : <strong id="pendingCount">0</strong></span>
+    </div>
     <div class="admin-sect">
         <div class="admin-header flex-between" onclick="App.renderDocApps(); App.toggleSect(this)">
-            <span><span id="docNotifDot" style="display:none;" class="dot-notif"></span>DEMANDES DE RDV</span> <i class="fas fa-bell text-primary"></i>
+            <span><span id="docNotifDot" style="display:none;" class="dot-notif"></span>DEMANDES DE RDV <span id="docPendingBadge" class="badge-count" style="display:none;">0</span></span>
+            <i class="fas fa-bell text-primary"></i>
         </div>
         <div class="admin-content" id="docAppointmentsList"></div>
     </div>
     <div id="docCalContainer"></div>
+    <div class="cal-legend">
+        <span>🟢 Disponible</span>
+        <span>🟡 Occupé/Attente</span>
+        <span>🔴 Bloqué</span>
+        <span>⚪ Plein</span>
+        <span id="blockModeHint" style="font-weight:600;">(Cliquez sur un créneau pour le bloquer/débloquer en mode blocage)</span>
+    </div>
     <div class="flex gap-2 mt-3">
-        <button id="btnToggleHours" class="btn-action bg-accent" onclick="App.toggleHourMode()"><i class="fas fa-lock"></i> BLOQUER</button>
+        <button id="btnToggleHours" class="btn-action bg-accent" onclick="App.toggleHourMode()"><i class="fas fa-lock"></i> Mode blocage</button>
         <button class="btn-action bg-gray" onclick="App.printDailyReport()"><i class="fas fa-print"></i> LISTE</button>
         <button class="btn-action bg-gray" onclick="App.openHistory()"><i class="fas fa-history"></i> HISTO</button>
     </div>
     <button class="btn-action bg-danger mt-3" onclick="App.logout()">QUITTER</button>
 </div>
 
+<!-- ===== PAGE HISTORIQUE AMÉLIORÉE ===== -->
 <div id="pageHistory" class="screen">
-    <h2 class="text-center text-primary font-bold">Historique Confirmé</h2>
-    <div class="flex justify-center gap-3 mb-3">
-        <button class="btn-circle bg-primary" onclick="App.exportHistory()"><i class="fas fa-file-export"></i></button>
-        <button class="btn-circle bg-danger" onclick="App.clearHistory()"><i class="fas fa-trash-sweep"></i></button>
+    <h2 class="text-center text-primary font-bold">📋 Historique des rendez-vous</h2>
+    <div class="flex-between mb-3" style="padding:0 4px;">
+        <span id="historyCount" class="history-count">0 rendez-vous</span>
+        <div class="flex gap-2">
+            <button class="btn-circle bg-primary" onclick="App.exportHistory()" title="Exporter en CSV"><i class="fas fa-file-export"></i></button>
+            <button class="btn-circle bg-danger" onclick="App.clearHistory()" title="Vider l'historique"><i class="fas fa-trash-sweep"></i></button>
+        </div>
     </div>
     <div id="historyList"></div>
 </div>
@@ -175,18 +337,30 @@
         <div class="admin-header flex-between" onclick="App.toggleSect(this)">AJOUTER SPÉCIALITÉ <i class="fas fa-plus text-primary"></i></div>
         <div class="admin-content"><input type="text" id="admSpecInput" placeholder="Nom spécialité"><button class="btn-action" onclick="App.addSpec()">CRÉER</button></div>
     </div>
+
+    <!-- SECTION AJOUTER MÉDECIN -->
     <div class="admin-sect">
         <div class="admin-header flex-between" onclick="App.updateSpecSel(); App.toggleSect(this)">AJOUTER MÉDECIN <i class="fas fa-user-md text-primary"></i></div>
         <div class="admin-content">
-            <select id="admSpecSelect"></select><input type="text" id="admDocName" placeholder="Nom Dr."><input type="text" id="admDocTitle" placeholder="Titre / Grade">
-            <input type="tel" id="admDocTel" placeholder="Téléphone"><input type="text" id="admDocCode" placeholder="Code connexion">
+            <select id="admSpecSelect"></select>
+            <input type="text" id="admDocName" placeholder="Nom Dr.">
+            <input type="text" id="admDocTitle" placeholder="Titre / Grade">
+            <input type="email" id="admDocEmail" placeholder="Email">
+            <input type="tel" id="admDocTel" placeholder="Téléphone principal">
+            <input type="text" id="admDocSecTel" placeholder="Téléphone(s) secrétaire(s) (séparés par des virgules)">
+            <input type="text" id="admDocAddress" placeholder="Adresse du cabinet">
+            <input type="text" id="admDocSubSpecs" placeholder="Spécialités secondaires (séparées par des virgules)">
+            <input type="text" id="admDocServices" placeholder="Prestations / actes (séparés par des virgules)">
+            <input type="text" id="admDocCode" placeholder="Code connexion">
             <input type="number" id="admDocDuration" placeholder="Validité (jours)" min="1">
             <div class="flex items-center gap-3 mt-3">
-                <span id="capDisplay" class="font-bold text-primary" style="font-size:1.4rem;">3</span><button class="btn-auth" onclick="App.cycleCap('capDisplay')">Capacité</button>
+                <span id="capDisplay" class="font-bold text-primary" style="font-size:1.4rem;">3</span>
+                <button class="btn-auth" onclick="App.cycleCap('capDisplay')">Capacité</button>
             </div>
             <button class="btn-action" onclick="App.addDoc()">VALIDER</button>
         </div>
     </div>
+
     <div class="admin-sect">
         <div class="admin-header flex-between" onclick="App.renderAdmins(); App.toggleSect(this)">GÉRER MÉDECINS <i class="fas fa-trash-alt text-danger"></i></div>
         <div class="admin-content" id="admGlobalList" style="padding:10px;"></div>
@@ -194,15 +368,37 @@
     <button class="btn-action bg-danger mt-3" onclick="App.logout()">DÉCONNEXION</button>
 </div>
 
+<!-- ===== MODALE ÉDITION MÉDECIN ===== -->
 <div id="modalEditDoc" class="internal-modal">
     <h3 class="mt-0 text-primary font-bold">Modifier Médecin</h3>
-    <input type="text" id="editDocName"><input type="text" id="editDocTitle"><input type="tel" id="editDocTel"><input type="text" id="editDocCode">
+    <input type="text" id="editDocName" placeholder="Nom Dr.">
+    <input type="text" id="editDocTitle" placeholder="Titre / Grade">
+    <input type="email" id="editDocEmail" placeholder="Email">
+    <input type="tel" id="editDocTel" placeholder="Téléphone principal">
+    <input type="text" id="editDocSecTel" placeholder="Téléphone(s) secrétaire(s) (séparés par des virgules)">
+    <input type="text" id="editDocAddress" placeholder="Adresse du cabinet">
+    <input type="text" id="editDocSubSpecs" placeholder="Spécialités secondaires (séparées par des virgules)">
+    <input type="text" id="editDocServices" placeholder="Prestations / actes (séparés par des virgules)">
+    <input type="text" id="editDocCode" placeholder="Code connexion">
     <input type="number" id="editDocDuration" placeholder="Validité (jours)" min="1">
     <div class="flex items-center gap-3 mt-3">
-        <span id="editCapDisplay" class="font-bold text-primary" style="font-size:1.4rem;">3</span><button class="btn-auth" onclick="App.cycleCap('editCapDisplay')">Capacité</button>
+        <span id="editCapDisplay" class="font-bold text-primary" style="font-size:1.4rem;">3</span>
+        <button class="btn-auth" onclick="App.cycleCap('editCapDisplay')">Capacité</button>
     </div>
     <button class="btn-action" id="btnUpdateDoc">METTRE À JOUR</button>
     <button class="btn-action bg-gray" onclick="App.closeModals()">ANNULER</button>
+</div>
+
+<!-- ===== MODALE ÉDITION UTILISATEUR ===== -->
+<div id="modalEditUser" class="internal-modal">
+    <h3 class="mt-0 text-primary font-bold">Modifier Utilisateur</h3>
+    <input type="text" id="editUserName" placeholder="Nom complet">
+    <input type="tel" id="editUserTel" placeholder="Téléphone">
+    <input type="text" id="editUserCode" placeholder="Code (chiffres)" maxlength="8">
+    <div class="flex gap-2 mt-3">
+        <button class="btn-action" onclick="App.saveUser()" style="flex:1;">ENREGISTRER</button>
+        <button class="btn-action bg-gray" onclick="App.closeModals()" style="flex:1;">FERMER</button>
+    </div>
 </div>
 
 <div id="pagePatientSpace" class="screen">
@@ -217,7 +413,9 @@
 
 <div id="pageSignup" class="screen">
     <h2 class="text-center font-bold">Inscription</h2>
-    <input type="text" id="regName" placeholder="Nom complet"><input type="tel" id="regTel" placeholder="Téléphone"><input type="password" id="regPass" placeholder="Code (4 chiffres)">
+    <input type="text" id="regName" placeholder="Nom complet">
+    <input type="tel" id="regTel" placeholder="Téléphone">
+    <input type="password" id="regPass" placeholder="Code (8 chiffres)" maxlength="8">
     <button class="btn-action" onclick="App.handleSignup()">S'INSCRIRE</button>
 </div>
 
@@ -416,7 +614,7 @@ const App = {
     this.showToast("Admin supprimé.");
   },
 
-  // ===== RENDER ADMINS (AMÉLIORÉ) =====
+  // ===== Gérer médecins =====
   renderAdmins() {
     $('admGlobalList').innerHTML = (this.appData.specs||[]).map(s => {
       const count = (s.docs||[]).length;
@@ -447,7 +645,128 @@ const App = {
     }).join('');
   },
 
-  // ===== Le reste du code est inchangé =====
+  // ===== RENDER UTILISATEURS =====
+  renderUsers() {
+    const list = (this.appData.patients||[]);
+    $('admUserList').innerHTML = list.map(p => `
+      <div class="manage-item flex-between">
+        <div>
+          <b>${p.name}</b>
+          <br><small>Code: ${p.code} | Tél: ${p.tel}</small>
+        </div>
+        <div class="flex gap-2">
+          <i class="fas fa-edit" onclick="App.openEditUser('${p.id}')" style="cursor:pointer; color:var(--secondary); font-size:1.1rem;"></i>
+          <button class="btn-delete-user" onclick="App.delUser('${p.id}')" title="Supprimer">×</button>
+        </div>
+      </div>
+    `).join('') || "<p class='text-muted'>Aucun utilisateur.</p>";
+  },
+
+  openEditUser(id) {
+    const user = this.appData.patients.find(p => p.id == id);
+    if (!user) return;
+    this._editingUserId = id;
+    $('editUserName').value = user.name || '';
+    $('editUserTel').value = user.tel || '';
+    $('editUserCode').value = user.code || '';
+    $('modalEditUser').classList.add('modal-show');
+  },
+
+  saveUser() {
+    const id = this._editingUserId;
+    if (!id) return this.showToast("Aucun utilisateur sélectionné");
+    const user = this.appData.patients.find(p => p.id == id);
+    if (!user) return this.showToast("Utilisateur introuvable");
+
+    const name = $('editUserName').value.trim();
+    const tel = $('editUserTel').value.trim();
+    const code = $('editUserCode').value.trim();
+    if (!name || !tel || !code) return this.showToast("Tous les champs sont requis");
+
+    user.name = name;
+    user.tel = tel;
+    user.code = code;
+
+    this.saveData();
+    this.closeModals();
+    this.renderUsers();
+    this.showToast("✅ Utilisateur mis à jour");
+  },
+
+  delUser(id) {
+    if (!confirm("Supprimer définitivement cet utilisateur ?")) return;
+    this.appData.patients = this.appData.patients.filter(p => p.id != id);
+    this.saveData();
+    this.renderUsers();
+    this.showToast("Utilisateur supprimé.");
+  },
+
+  // ===== RENDER DEMANDES DE RDV =====
+  renderDocApps() {
+    if (!this.activeDoc) return;
+    const all = this.activeDoc.appointments || [];
+    const pending = all.filter(a => a.status === 'pending').sort((a,b) => a.createdAt - b.createdAt);
+    const valid = all.filter(a => a.status === 'valid').sort((a,b) => new Date(a.day.split('/').reverse().join('-')) - new Date(b.day.split('/').reverse().join('-')) || a.hour - b.hour);
+    
+    const badge = $('docPendingBadge');
+    if (pending.length > 0) {
+      badge.style.display = 'inline-block';
+      badge.textContent = pending.length;
+    } else {
+      badge.style.display = 'none';
+    }
+    $('docNotifDot').style.display = pending.length > 0 ? 'inline-block' : 'none';
+
+    const today = new Date().toLocaleDateString('fr-FR', {day:'numeric', month:'numeric'});
+    const todayCount = valid.filter(a => a.day === today).length;
+    $('todayCount').textContent = todayCount;
+    $('pendingCount').textContent = pending.length;
+
+    let html = '';
+    if (pending.length === 0 && valid.length === 0) {
+      html = '<p class="text-center text-muted">Aucun rendez-vous.</p>';
+    } else {
+      const allSorted = [...pending, ...valid].sort((a,b) => {
+        const da = new Date(a.day.split('/').reverse().join('-'));
+        const db = new Date(b.day.split('/').reverse().join('-'));
+        if (da - db !== 0) return da - db;
+        return a.hour - b.hour;
+      });
+
+      let currentDay = '';
+      allSorted.forEach(a => {
+        if (a.day !== currentDay) {
+          currentDay = a.day;
+          html += `<div style="font-weight:600; color:var(--text-secondary); margin:12px 0 6px; font-size:0.85rem;">📅 ${a.day}</div>`;
+        }
+        const isPending = a.status === 'pending';
+        html += `
+          <div class="rdv-card" data-id="${a.id}">
+            <div class="rdv-header">
+              <strong>${a.patName}</strong>
+              <span class="rdv-status ${a.status}">${isPending ? 'En attente' : 'Validé'}</span>
+            </div>
+            <div class="rdv-details">
+              <span><i class="far fa-clock"></i> ${a.hour}h</span>
+              <span><i class="fas fa-phone"></i> ${a.patTel}</span>
+            </div>
+            <div class="rdv-actions">
+              ${isPending ? `
+                <button class="btn-action-sm bg-success" onclick="App.validateRDV('${a.id}')"><i class="fas fa-check"></i> Valider</button>
+                <button class="btn-action-sm bg-danger" onclick="App.rejectRDV('${a.id}')"><i class="fas fa-times"></i> Rejeter</button>
+              ` : `
+                <button class="btn-action-sm bg-secondary" onclick="location.href='tel:${a.patTel}'"><i class="fas fa-phone"></i> Appeler</button>
+                <button class="btn-action-sm bg-danger" onclick="App.confirmDelRDV('${a.id}')"><i class="fas fa-trash"></i> Supprimer</button>
+              `}
+            </div>
+          </div>
+        `;
+      });
+    }
+    $('docAppointmentsList').innerHTML = html;
+  },
+
+  // ===== RENDER CALENDRIER =====
   renderCalendar(cid, isDoc) {
     const doc = isDoc ? this.activeDoc : this.selectedDoc; if (!doc) return;
     const days = Array.from({length:6}, (_,i) => { let d=new Date(); d.setDate(d.getDate()+i); return { l:["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"][d.getDay()], s:d.toLocaleDateString('fr-FR',{day:'numeric',month:'numeric'}) };});
@@ -468,22 +787,37 @@ const App = {
       htm += `</tr>`;
     });
     $(cid).innerHTML = htm + `</table>`;
+    const hint = $('blockModeHint');
+    if (hint) hint.textContent = this.isHourMode ? '(Cliquez sur un créneau pour le bloquer/débloquer)' : '(Mode normal – cliquez pour gérer les RDV)';
   },
 
+  // ===== GESTION DES ACTIONS MÉDECIN =====
   handleSlot(day, hour, isDoc, isMine) {
     if (isDoc) {
       if (this.isHourMode) {
         let blk = this.activeDoc.blockedSlots||[];
         this.activeDoc.blockedSlots = blk.includes(`${day}-${hour}`) ? blk.filter(s=>s!==`${day}-${hour}`) : [...blk, `${day}-${hour}`];
         this.saveData(); this.renderCalendar('docCalContainer', true);
+        this.showToast(blk.includes(`${day}-${hour}`) ? "Créneau débloqué" : "Créneau bloqué");
         return;
       }
       const ls = (this.activeDoc.appointments||[]).filter(a=>a.day===day&&a.hour===hour);
       if(ls.length) {
         $('modalDocTitle').textContent = `RDV ${day} à ${hour}h`;
-        $('docActionInfo').innerHTML = ls.map(a=>`<div class="manage-item flex-between"><div><b>${a.patName}</b><br><small class="${a.status==='valid'?'text-success':'text-warning'}">${a.status==='valid'?'Validé':'Attente'}</small></div><div class="flex gap-2"><button class="btn-circle bg-accent" onclick="location.href='tel:${a.patTel}'"><i class="fas fa-phone"></i></button><button class="btn-circle bg-success" onclick="App.validateRDV('${a.id}')"><i class="fas fa-check"></i></button><button class="btn-circle bg-danger" onclick="App.confirmDelRDV('${a.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+        $('docActionInfo').innerHTML = ls.map(a=>`
+          <div class="manage-item flex-between">
+            <div><b>${a.patName}</b><br><small class="${a.status==='valid'?'text-success':'text-warning'}">${a.status==='valid'?'Validé':'Attente'}</small></div>
+            <div class="flex gap-2">
+              <button class="btn-circle bg-accent" onclick="location.href='tel:${a.patTel}'"><i class="fas fa-phone"></i></button>
+              ${a.status==='pending' ? `<button class="btn-circle bg-success" onclick="App.validateRDV('${a.id}')"><i class="fas fa-check"></i></button>` : ''}
+              <button class="btn-circle bg-danger" onclick="App.confirmDelRDV('${a.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        `).join('');
         $('modalConfirmButtons').style.display='none'; $('btnCloseModal').style.display='block';
         $('modalDoc').classList.add('modal-show');
+      } else {
+        this.showToast("Aucun rendez-vous à cet horaire");
       }
     } else {
       if(!this.activePatient) { this.showToast("Connectez-vous"); return setTimeout(()=>this.openLogin(),1000); }
@@ -506,27 +840,130 @@ const App = {
   },
 
   confirmDelRDV(id) {
-    $('docActionInfo').innerHTML=`<p class="text-center">Supprimer ce rendez-vous ?</p>`; $('modalConfirmButtons').style.display='flex';
-    $('btnFinalConfirm').onclick=()=>{ this.activeDoc.appointments=this.activeDoc.appointments.filter(a=>a.id!=id); this.saveData(); this.closeModals(); this.updateUI(); this.showToast("Supprimé."); };
+    if (!confirm("Supprimer définitivement ce rendez-vous ?")) return;
+    this.activeDoc.appointments = this.activeDoc.appointments.filter(a=>a.id!=id);
+    this.saveData(); this.closeModals(); this.updateUI(); this.showToast("Supprimé.");
   },
 
-  renderDocApps() {
-    $('docAppointmentsList').innerHTML = (this.activeDoc.appointments||[]).filter(a=>a.status==='pending').sort((a,b)=>a.createdAt-b.createdAt).map(a=>`<div class="manage-item flex-between"><div><b>${a.patName}</b><br><small>Date: ${new Date(a.createdAt).toLocaleString()}</small></div><div class="flex gap-2"><button onclick="App.validateRDV('${a.id}')" class="btn-circle bg-success"><i class="fas fa-check"></i></button><button onclick="App.rejectRDV('${a.id}')" class="btn-circle bg-danger"><i class="fas fa-times"></i></button></div></div>`).join('') || "Aucune demande.";
+  validateRDV(id) { 
+    const a = this.activeDoc.appointments.find(x=>x.id==id); 
+    if(a){ a.status='valid'; this.activeDoc.history=[...(this.activeDoc.history||[]), {...a, confirmedAt:Date.now()}]; this.saveData(); this.updateUI(); this.showToast("✅ Rendez-vous validé"); } 
+  },
+  rejectRDV(id) { 
+    this.activeDoc.appointments = this.activeDoc.appointments.filter(a=>a.id!=id); 
+    this.saveData(); this.updateUI(); this.showToast("❌ Demande rejetée"); 
   },
 
-  validateRDV(id) { const a = this.activeDoc.appointments.find(x=>x.id==id); if(a){ a.status='valid'; this.activeDoc.history=[...(this.activeDoc.history||[]), {...a, confirmedAt:Date.now()}]; this.saveData(); this.updateUI(); this.showToast("Validé"); } },
-  rejectRDV(id) { this.activeDoc.appointments = this.activeDoc.appointments.filter(a=>a.id!=id); this.saveData(); this.updateUI(); this.showToast("Rejeté"); },
+  toggleHourMode() { 
+    this.isHourMode = !this.isHourMode; 
+    const btn = $('btnToggleHours');
+    if (this.isHourMode) {
+      btn.classList.remove('bg-accent');
+      btn.classList.add('bg-danger');
+      btn.innerHTML = '<i class="fas fa-unlock"></i> Mode normal';
+      this.showToast("🔒 Mode blocage activé");
+    } else {
+      btn.classList.remove('bg-danger');
+      btn.classList.add('bg-accent');
+      btn.innerHTML = '<i class="fas fa-lock"></i> Mode blocage';
+      this.showToast("🔓 Mode normal");
+    }
+    this.renderCalendar('docCalContainer', true);
+  },
 
-  openHistory() { this.showScreen('pageHistory'); $('historyList').innerHTML = (this.activeDoc.history||[]).map(h=>`<div class="manage-item"><b>${h.patName}</b> <small>${h.day} - ${h.hour}h</small></div>`).reverse().join('') || "<p class='text-center text-muted'>Vide.</p>"; },
-  exportHistory() { if(!this.activeDoc.history?.length) return this.showToast("Vide"); const a = document.createElement("a"); a.href=URL.createObjectURL(new Blob([this.activeDoc.history.map(h=>`${h.patName} | ${h.patTel} | ${h.day} à ${h.hour}h`).join('\n')],{type:"text/plain"})); a.download="historique.txt"; a.click(); },
-  clearHistory() { if(confirm("Vider l'historique ?")) { this.activeDoc.history=[]; this.saveData(); this.openHistory(); this.showToast("Vidé"); } },
+  // ===== HISTORIQUE AMÉLIORÉ =====
+  openHistory() {
+    this.showScreen('pageHistory');
+    const history = this.activeDoc.history || [];
+    const count = history.length;
+    $('historyCount').textContent = `${count} rendez-vous validés`;
 
+    if (count === 0) {
+      $('historyList').innerHTML = `<p class="text-center text-muted">Aucun rendez-vous dans l'historique.</p>`;
+      return;
+    }
+
+    // Grouper par jour (tri décroissant)
+    const grouped = {};
+    history.forEach(item => {
+      const day = item.day; // format "DD/MM"
+      if (!grouped[day]) grouped[day] = [];
+      grouped[day].push(item);
+    });
+
+    // Trier les jours (du plus récent au plus ancien)
+    const sortedDays = Object.keys(grouped).sort((a, b) => {
+      const da = new Date(a.split('/').reverse().join('-'));
+      const db = new Date(b.split('/').reverse().join('-'));
+      return db - da; // décroissant
+    });
+
+    let html = '';
+    sortedDays.forEach(day => {
+      html += `<div class="history-day"><h4>📅 ${day}</h4>`;
+      // Trier les rdv par heure
+      const items = grouped[day].sort((a, b) => a.hour - b.hour);
+      items.forEach(item => {
+        const confirmDate = item.confirmedAt ? new Date(item.confirmedAt).toLocaleString('fr-FR', {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'}) : 'Non daté';
+        html += `
+          <div class="history-item">
+            <div class="patient-info">
+              <strong>${item.patName}</strong>
+              <small>${item.patTel}</small>
+              <div class="confirm-date">
+                <i class="far fa-clock"></i> ${item.hour}h &nbsp;|&nbsp; <i class="fas fa-check-circle" style="color:var(--success);"></i> Confirmé le ${confirmDate}
+              </div>
+            </div>
+            <div class="history-actions">
+              <a href="tel:${item.patTel}" class="btn-circle bg-secondary" style="width:32px; height:32px; font-size:0.8rem; text-decoration:none; color:white; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-phone"></i></a>
+            </div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    });
+
+    $('historyList').innerHTML = html;
+  },
+
+  // Export amélioré en CSV
+  exportHistory() {
+    const history = this.activeDoc.history || [];
+    if (history.length === 0) return this.showToast("Historique vide");
+
+    // En-têtes CSV
+    const header = ['Patient', 'Téléphone', 'Date', 'Heure', 'Statut', 'Confirmé le'];
+    const rows = history.map(item => {
+      const confirmDate = item.confirmedAt ? new Date(item.confirmedAt).toLocaleString('fr-FR') : '';
+      return [item.patName, item.patTel, item.day, item.hour, 'Validé', confirmDate];
+    });
+
+    const csvContent = [header, ...rows].map(row => row.join(';')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `historique_${this.activeDoc.name}_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    this.showToast("📤 Export CSV réussi");
+  },
+
+  clearHistory() {
+    if (!confirm("Vider tout l'historique ? Cette action est irréversible.")) return;
+    this.activeDoc.history = [];
+    this.saveData();
+    this.openHistory();
+    this.showToast("🗑️ Historique vidé");
+  },
+
+  // ===== RAPPORT JOURNALIER =====
   printDailyReport() {
     const today = new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'numeric'});
     const apps = (this.activeDoc.appointments||[]).filter(a=>a.day===today&&a.status==='valid').sort((a,b)=>a.hour-b.hour);
     $('printArea').innerHTML = `<h1 class="text-center">Rapport - Dr. ${this.activeDoc.name}</h1><h3 class="text-center">${today}</h3><table><tr><th>Heure</th><th>Patient</th><th>Tel</th></tr>${apps.map(a=>`<tr><td>${a.hour}h</td><td>${a.patName}</td><td>${a.patTel}</td></tr>`).join('')}</table>`; window.print();
   },
 
+  // ===== AUTRES FONCTIONS (inchangées) =====
   renderPatientApps() {
     let h=""; (this.appData.specs||[]).forEach(s=>s.docs?.forEach(d=>d.appointments?.filter(a=>a.patId===this.activePatient.id).forEach(a=>h+=`<div class="manage-item flex-between"><div><b>Dr. ${d.name}</b><br><small>${a.day} à ${a.hour}h</small></div><span class="${a.status==='valid'?'text-success':'text-warning'}">${a.status==='valid'?'Confirmé':'Attente'}</span></div>`)));
     $('patientAppointments').innerHTML = h || "Aucun RDV.";
@@ -536,28 +973,60 @@ const App = {
   acceptPat(id) { const p = this.appData.pendingPatients.find(x=>x.id==id); this.appData.pendingPatients=this.appData.pendingPatients.filter(x=>x.id!=id); this.appData.patients=[...(this.appData.patients||[]), p]; this.saveData(); this.renderPending(); },
   rejectPat(id) { this.appData.pendingPatients = this.appData.pendingPatients.filter(p=>p.id!=id); this.saveData(); this.renderPending(); },
 
-  renderUsers() { $('admUserList').innerHTML = (this.appData.patients||[]).map(p=>`<div class="manage-item flex-between"><div><b>${p.name}</b><br><small>Code: ${p.code}</small></div><button onclick="App.delUser('${p.id}')" class="btn-circle bg-danger"><i class="fas fa-times"></i></button></div>`).join(''); },
-  delUser(id) { this.appData.patients = this.appData.patients.filter(p=>p.id!=id); this.saveData(); this.renderUsers(); },
-
-  // La fonction renderAdmins() est maintenant définie plus haut (améliorée)
-
   delSpec(id) { if(confirm("Supprimer la spécialité ?")) { this.appData.specs=this.appData.specs.filter(s=>s.id!==id); this.saveData(); this.renderAdmins(); } },
   delDoc(sid,did) { if(confirm("Supprimer ce médecin ?")) { const s=this.appData.specs.find(x=>x.id===sid); s.docs=s.docs.filter(x=>x.id!==did); this.saveData(); this.renderAdmins(); } },
 
   openEditDoc(sid, did) {
     const d = this.appData.specs.find(x=>x.id===sid).docs.find(x=>x.id===did);
-    ['Name','Title','Tel','Code'].forEach(k=>$('editDoc'+k).value=d[k.toLowerCase()]);
-    $('editDocDuration').value = d.validityDays||""; $('editCapDisplay').textContent=d.capacity;
+    $('editDocName').value = d.name || '';
+    $('editDocTitle').value = d.title || '';
+    $('editDocTel').value = d.tel || '';
+    $('editDocCode').value = d.code || '';
+    $('editDocDuration').value = d.validityDays || '';
+    $('editCapDisplay').textContent = d.capacity || 3;
+    $('editDocEmail').value = d.email || '';
+    $('editDocSecTel').value = (d.secTel || []).join(', ');
+    $('editDocAddress').value = d.address || '';
+    $('editDocSubSpecs').value = (d.subSpecs || []).join(', ');
+    $('editDocServices').value = (d.services || []).join(', ');
     this._eS=sid; this._eD=did; $('modalEditDoc').classList.add('modal-show');
   },
+
   updateDoc() {
-    const d = this.appData.specs.find(x=>x.id===this._eS).docs.find(x=>x.id===this._eD), j = parseInt($('editDocDuration').value)||0;
-    ['Name','Title','Tel','Code'].forEach(k=>d[k.toLowerCase()]=$('editDoc'+k).value);
-    d.validityDays = j; d.expiresAt = Date.now()+(j*86400000)-(j?0:60000); d.capacity = parseInt($('editCapDisplay').textContent);
-    this.saveData(); this.closeModals(); this.renderAdmins();
+    const s = this.appData.specs.find(x => x.id === this._eS);
+    if (!s) return this.showToast("Spécialité introuvable");
+    const d = s.docs.find(x => x.id === this._eD);
+    if (!d) return this.showToast("Médecin introuvable");
+    const j = parseInt($('editDocDuration').value) || 0;
+    d.name = $('editDocName').value.trim();
+    d.title = $('editDocTitle').value.trim();
+    d.email = $('editDocEmail').value.trim();
+    d.tel = $('editDocTel').value.trim();
+    d.secTel = $('editDocSecTel').value.split(',').map(s => s.trim()).filter(s => s);
+    d.address = $('editDocAddress').value.trim();
+    d.subSpecs = $('editDocSubSpecs').value.split(',').map(s => s.trim()).filter(s => s);
+    d.services = $('editDocServices').value.split(',').map(s => s.trim()).filter(s => s);
+    d.code = $('editDocCode').value.trim();
+    d.validityDays = j;
+    d.expiresAt = Date.now() + (j * 86400000) - (j ? 0 : 60000);
+    d.capacity = parseInt($('editCapDisplay').textContent);
+    this.saveData();
+    this.closeModals();
+    this.renderAdmins();
+    this.showToast("✅ Médecin mis à jour");
   },
 
-  renderPatientHome() { $('specialtyGrid').innerHTML = (this.appData.specs||[]).map(s=>`<div class="spec-card" onclick="App.openSpec('${s.id}')"><i class="fas ${s.icon||'fa-user-md'}"></i><b>${s.label}</b></div>`).join(''); },
+  renderPatientHome() {
+    $('specialtyGrid').innerHTML = (this.appData.specs||[]).map(s => {
+      const docCount = (s.docs||[]).length;
+      return `<div class="spec-card" onclick="App.openSpec('${s.id}')">
+        <i class="fas ${s.icon||'fa-user-md'}"></i>
+        <b>${s.label}</b>
+        ${docCount > 0 ? `<span style="display:inline-block; background:#f3f4f6; color:#6b7280; border-radius:999px; padding:0 8px; font-size:0.7rem; margin-left:6px;">${docCount}</span>` : ''}
+      </div>`;
+    }).join('');
+  },
+
   openSpec(sid) {
     const s = this.appData.specs.find(x=>x.id===sid);
     $('specialtyGrid').innerHTML = `<button onclick="App.renderPatientHome()" style="grid-column:1/3; background:none; border:none; text-align:left; color:var(--primary); font-weight:600;">← Retour</button>` + (s.docs||[]).filter(d=>!d.expiresAt||Date.now()<=d.expiresAt).map(d=>`<div class="manage-item flex-between" onclick="App.openDocCal('${sid}','${d.id}')" style="grid-column:1/3; cursor:pointer;"><div><b>Dr. ${d.name}</b><br><small>${d.title}</small></div><i class="fas fa-calendar-alt text-primary"></i></div>`).join('');
@@ -567,8 +1036,11 @@ const App = {
   updateUI() {
     const act = document.querySelector('.screen.active')?.id;
     if(act==='pagePatients') this.renderPatientHome();
-    if(this.activeDoc && act==='pageDocSpace') { this.renderCalendar('docCalContainer',true); this.renderDocApps(); $('docNotifDot').style.display=(this.activeDoc.appointments||[]).some(a=>a.status==='pending')?'inline-block':'none'; }
-    if(this.selectedDoc && act==='pageCalPatient') this.renderCalendar('calPatientContainer',false);
+    if(this.activeDoc && act==='pageDocSpace') { 
+      this.renderCalendar('docCalContainer', true); 
+      this.renderDocApps(); 
+    }
+    if(this.selectedDoc && act==='pageCalPatient') this.renderCalendar('calPatientContainer', false);
     if(this.activePatient && act==='pagePatientSpace') this.renderPatientApps();
     if(act==='pageAdmin') {
       $('notifDot').style.display=this.appData.pendingPatients?.length?'inline-block':'none';
@@ -584,15 +1056,52 @@ const App = {
   updateSpecSel() { $('admSpecSelect').innerHTML = (this.appData.specs||[]).map(s=>`<option value="${s.id}">${s.label}</option>`).join(''); },
   
   addDoc() {
-    const sid=$('admSpecSelect').value, j=parseInt($('admDocDuration').value)||0;
-    if(!sid||!$('admDocName').value) return this.showToast("Champs requis");
-    const s = this.appData.specs.find(x=>x.id===sid);
-    s.docs.push({id:'d'+Date.now(), name:$('admDocName').value, title:$('admDocTitle').value, tel:$('admDocTel').value, code:$('admDocCode').value, capacity:parseInt($('capDisplay').textContent), validityDays:j, expiresAt:Date.now()+(j*86400000)-(j?0:60000), appointments:[], blockedSlots:[], history:[]});
-    this.saveData(); this.showToast("Ajouté !"); $$('.admin-content input').forEach(i=>i.value="");
+    const sid = $('admSpecSelect').value;
+    const j = parseInt($('admDocDuration').value) || 0;
+    if (!sid || !$('admDocName').value) return this.showToast("Champs requis");
+
+    const s = this.appData.specs.find(x => x.id === sid);
+    const email = $('admDocEmail').value.trim();
+    const secTel = $('admDocSecTel').value.split(',').map(s => s.trim()).filter(s => s);
+    const address = $('admDocAddress').value.trim();
+    const subSpecs = $('admDocSubSpecs').value.split(',').map(s => s.trim()).filter(s => s);
+    const services = $('admDocServices').value.split(',').map(s => s.trim()).filter(s => s);
+
+    s.docs.push({
+      id: 'd' + Date.now(),
+      name: $('admDocName').value,
+      title: $('admDocTitle').value,
+      email: email,
+      tel: $('admDocTel').value,
+      secTel: secTel,
+      address: address,
+      subSpecs: subSpecs,
+      services: services,
+      code: $('admDocCode').value,
+      capacity: parseInt($('capDisplay').textContent),
+      validityDays: j,
+      expiresAt: Date.now() + (j * 86400000) - (j ? 0 : 60000),
+      appointments: [],
+      blockedSlots: [],
+      history: []
+    });
+
+    this.saveData();
+    this.showToast("✅ Médecin ajouté !");
+    ['admDocName','admDocTitle','admDocEmail','admDocTel','admDocSecTel','admDocAddress','admDocSubSpecs','admDocServices','admDocCode','admDocDuration'].forEach(id => $(id).value = '');
   },
 
-  handleSignup() { const n=$('regName').value, t=$('regTel').value, c=$('regPass').value; if(!n||!t||!c) return; this.appData.pendingPatients=[...(this.appData.pendingPatients||[]),{id:Date.now(),name:n,tel:t,code:c}]; this.saveData(); this.showToast("Demande envoyée !"); this.showScreen('pagePatients'); },
-  toggleHourMode() { this.isHourMode = !this.isHourMode; $('btnToggleHours').classList.toggle('bg-danger'); $('btnToggleHours').classList.toggle('bg-accent'); this.showToast(this.isHourMode?"Blocage activé":"Blocage désactivé"); }
+  handleSignup() { 
+    const n = $('regName').value.trim();
+    const t = $('regTel').value.trim();
+    const c = $('regPass').value.trim();
+    if (!n || !t || !c) return this.showToast("Tous les champs sont requis");
+    if (!/^\d+$/.test(c)) return this.showToast("Le code doit contenir uniquement des chiffres");
+    this.appData.pendingPatients = [...(this.appData.pendingPatients||[]), { id: Date.now(), name: n, tel: t, code: c }];
+    this.saveData();
+    this.showToast("Demande envoyée !");
+    this.showScreen('pagePatients');
+  }
 };
 
 window.App = App;
@@ -600,7 +1109,5 @@ App.init();
 
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
 </script>
-
-<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));}</script>
 </body>
 </html>
