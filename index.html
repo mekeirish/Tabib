@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <style>
-    /* ===== VOTRE CSS ORIGINAL (inchangé) ===== */
+    /* ===== CSS inchangé ===== */
     :root {
       --bg: #ecfdf5; --card: #ffffff; --card-border: #d1fae5;
       --primary: #059669; --primary-light: #10b981; --primary-dark: #047857;
@@ -22,7 +22,6 @@
     input, textarea { -webkit-user-select: text; user-select: text; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; line-height: 1.5; }
 
-    /* Utilitaires */
     .text-center { text-align: center; } .text-primary { color: var(--primary); } .font-bold { font-weight: 700; }
     .flex { display: flex; } .flex-between { display: flex; justify-content: space-between; align-items: center; }
     .gap-2 { gap: 8px; } .gap-3 { gap: 12px; } .mt-0 { margin-top: 0; } .mt-3 { margin-top: 12px; }
@@ -92,10 +91,7 @@
   </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#059669">
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#4b6cb7">
-<link rel="apple-touch-icon" href="icon.png"></head>
+</head>
 <body oncontextmenu="return false;"> 
 <div id="notificationBar" class="text-xs">Message</div>
 
@@ -116,7 +112,6 @@
     <div class="flex" style="margin-bottom:20px;"><button onclick="App.goBack()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:600;"><i class="fas fa-arrow-left"></i> Retour</button></div>
     <h2 class="mt-0 font-bold">Identification</h2>
     <div id="loginDisplay"></div>
-    <!-- Le pavé numérique sera généré dynamiquement ici via JavaScript -->
     <div class="numpad" id="numpadContainer"></div>
 </div>
 
@@ -148,6 +143,21 @@
 
 <div id="pageAdmin" class="screen">
     <h3 class="text-center font-bold" style="color:var(--accent);">PANEL ADMIN</h3>
+    <!-- SECTION ADMINS -->
+    <div class="admin-sect">
+        <div class="admin-header flex-between" onclick="App.renderAdminsList(); App.toggleSect(this)">
+            <span><i class="fas fa-user-shield text-primary"></i> ADMINS</span> <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="admin-content" id="adminsListContainer">
+            <div id="adminsList"></div>
+            <div class="flex gap-2 mt-3">
+                <input type="text" id="newAdminName" placeholder="Nom de l'admin" style="flex:2;">
+                <input type="password" id="newAdminCode" placeholder="Code (4 chiffres)" style="flex:1;" maxlength="4">
+                <button class="btn-action" onclick="App.addAdmin()" style="flex:0 0 auto;">AJOUTER</button>
+            </div>
+        </div>
+    </div>
+    <!-- FIN SECTION ADMINS -->
     <div class="admin-sect">
         <div class="admin-header flex-between" onclick="App.renderPending(); App.toggleSect(this)">
             <span><span id="notifDot" style="display:none;" class="dot-notif"></span>INSCRIPTIONS EN ATTENTE</span> <i class="fas fa-user-plus text-primary"></i>
@@ -228,39 +238,45 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// ===== Configuration Firebase (inchangée) =====
+// ===== Firebase =====
 const firebaseConfig = { apiKey:"AIzaSyAHDgrxnfQlvqN4ZfZH2J5qCjEQSoSbq4Y", authDomain:"tabib-380fb.firebaseapp.com", databaseURL:"https://tabib-380fb-default-rtdb.europe-west1.firebasedatabase.app", projectId:"tabib-380fb", storageBucket:"tabib-380fb.firebasestorage.app", messagingSenderId:"788379849606", appId:"1:788379849606:web:4cfd0f8d4184869e811207" };
 const db = getDatabase(initializeApp(firebaseConfig));
 const dbRef = ref(db, 'tabibData');
 
-// ===== Helpers définis AVANT l'objet App (correction 1) =====
+// ===== Helpers =====
 const $ = id => document.getElementById(id);
 const $$ = sel => document.querySelectorAll(sel);
 
-// ===== Objet App (logique inchangée, sauf corrections mineures) =====
+// ===== Fonction de hachage SHA-256 =====
+async function hashCode(code) {
+  const enc = new TextEncoder().encode(code);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ===== Objet App =====
 const App = {
-  appData: { specs: [], patients: [], pendingPatients: [], _version: 0 },
+  appData: { specs: [], patients: [], pendingPatients: [], admins: [], adminHash: null, _version: 0 },
   currCode: "", selectedDoc: null, activeDoc: null, activePatient: null, isHourMode: false, navigationHistory: ['pagePatients'],
 
-  init() {
-    // Chargement local
+  async init() {
     try { const s = localStorage.getItem('tabibData'); if (s) this.appData = JSON.parse(s) || this.appData; } catch (e){}
     
-    // Écoute Firebase
     onValue(dbRef, (snap) => {
       if (snap.val()) {
-        this.appData = snap.val(); this.persistLocally();
-        // Mettre à jour les références actives
+        this.appData = snap.val();
+        if (!this.appData.adminHash) {
+          this.generateAdminHash();
+        }
+        this.persistLocally();
         if (this.activeDoc) this.activeDoc = this.appData.specs.flatMap(s=>s.docs||[]).find(d=>d.id===this.activeDoc.id);
         if (this.selectedDoc) this.selectedDoc = this.appData.specs.flatMap(s=>s.docs||[]).find(d=>d.id===this.selectedDoc.id);
       }
       this.updateUI();
     });
 
-    // Écouteur pour le bouton "Mettre à jour"
     $('btnUpdateDoc').addEventListener('click', () => this.updateDoc());
 
-    // === Génération du pavé numérique (correction 2) ===
     const numpadContainer = $('numpadContainer');
     if (numpadContainer) {
       numpadContainer.innerHTML = `
@@ -271,12 +287,22 @@ const App = {
       `;
     }
 
-    // Initialisation UI
     this.updateUI();
   },
 
+  async generateAdminHash() {
+    const hash = await hashCode('00001747');
+    this.appData.adminHash = hash;
+    this.saveData();
+  },
+
   persistLocally() { try{ localStorage.setItem('tabibData', JSON.stringify(this.appData)); }catch(e){} },
-  saveData() { this.appData._version = (this.appData._version || 0) + 1; update(ref(db), { tabibData: this.appData }); this.persistLocally(); },
+
+  saveData() {
+    this.appData._version = (this.appData._version || 0) + 1;
+    update(dbRef, this.appData);
+    this.persistLocally();
+  },
 
   showToast(msg) {
     $('notificationBar').textContent = msg; $('notificationBar').classList.add('visible');
@@ -298,18 +324,87 @@ const App = {
   logout() { location.reload(); },
 
   openLogin() { this.currCode = ""; $('loginDisplay').textContent = ""; this.showScreen('pageLogin'); },
-  pressN(n) { if(this.currCode.length < 4) { this.currCode += n; $('loginDisplay').textContent = "•".repeat(this.currCode.length); } },
+
+  // === Correction : autoriser jusqu'à 8 chiffres ===
+  pressN(n) {
+    if (this.currCode.length < 8) {
+      this.currCode += n;
+      $('loginDisplay').textContent = "•".repeat(this.currCode.length);
+    }
+  },
   clearCode() { this.currCode = ""; $('loginDisplay').textContent = ""; },
 
-  submitLogin() {
-    if (this.currCode === "1747") return this.showScreen('pageAdmin');
-    const d = this.appData.specs.flatMap(s=>s.docs||[]).find(x=>x.code === this.currCode);
-    if(d) { this.activeDoc = d; $('docSpaceName').textContent = "Dr. " + d.name; return this.showScreen('pageDocSpace'); }
-    const p = (this.appData.patients||[]).find(x=>x.code === this.currCode);
-    if(p) { this.activePatient = p; $('patientWelcome').textContent = "Bonjour, " + p.name; return this.showScreen('pagePatientSpace'); }
+  async submitLogin() {
+    const code = this.currCode;
+    if (!code) return this.showToast("Entrez un code");
+
+    // Vérifier admin principal (hash)
+    if (this.appData.adminHash) {
+      const hashed = await hashCode(code);
+      if (hashed === this.appData.adminHash) {
+        this.showScreen('pageAdmin');
+        this.clearCode();
+        return;
+      }
+      // Vérifier autres admins
+      if (this.appData.admins) {
+        for (let admin of this.appData.admins) {
+          if (await hashCode(code) === admin.hash) {
+            this.showScreen('pageAdmin');
+            this.clearCode();
+            return;
+          }
+        }
+      }
+    }
+
+    // Vérifier médecin (code 4 chiffres)
+    const d = this.appData.specs.flatMap(s=>s.docs||[]).find(x=>x.code === code);
+    if(d) { this.activeDoc = d; $('docSpaceName').textContent = "Dr. " + d.name; this.showScreen('pageDocSpace'); this.clearCode(); return; }
+
+    // Vérifier patient (code 4 chiffres)
+    const p = (this.appData.patients||[]).find(x=>x.code === code);
+    if(p) { this.activePatient = p; $('patientWelcome').textContent = "Bonjour, " + p.name; this.showScreen('pagePatientSpace'); this.clearCode(); return; }
+
     this.showToast("Code invalide"); this.clearCode();
   },
 
+  // === Gestion des admins ===
+  renderAdminsList() {
+    const container = $('adminsList');
+    if (!container) return;
+    const admins = this.appData.admins || [];
+    container.innerHTML = admins.map(a => `
+      <div class="manage-item flex-between">
+        <div><b>${a.name}</b><br><small>Hash: ${a.hash.slice(0,8)}…</small></div>
+        <button onclick="App.removeAdmin('${a.id}')" class="btn-circle bg-danger"><i class="fas fa-trash"></i></button>
+      </div>
+    `).join('') || "<p class='text-muted'>Aucun admin.</p>";
+  },
+
+  async addAdmin() {
+    const name = $('newAdminName').value.trim();
+    const code = $('newAdminCode').value.trim();
+    if (!name || !code || code.length !== 4) return this.showToast("Nom et code (4 chiffres) requis");
+    const hash = await hashCode(code);
+    if (!this.appData.admins) this.appData.admins = [];
+    this.appData.admins.push({ id: 'a'+Date.now(), name, hash, createdAt: Date.now() });
+    this.saveData();
+    this.renderAdminsList();
+    $('newAdminName').value = '';
+    $('newAdminCode').value = '';
+    this.showToast("Admin ajouté !");
+  },
+
+  removeAdmin(id) {
+    if (!confirm("Supprimer cet admin ?")) return;
+    this.appData.admins = this.appData.admins.filter(a => a.id !== id);
+    this.saveData();
+    this.renderAdminsList();
+    this.showToast("Admin supprimé.");
+  },
+
+  // ===== Le reste du code est inchangé =====
   renderCalendar(cid, isDoc) {
     const doc = isDoc ? this.activeDoc : this.selectedDoc; if (!doc) return;
     const days = Array.from({length:6}, (_,i) => { let d=new Date(); d.setDate(d.getDate()+i); return { l:["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"][d.getDay()], s:d.toLocaleDateString('fr-FR',{day:'numeric',month:'numeric'}) };});
@@ -324,7 +419,6 @@ const App = {
         let cls = blk ? "is-blocked" : mine ? "is-busy" : val.length >= doc.capacity ? "is-full" : val.length||all.filter(a=>a.day===d.s&&a.hour===h&&a.status==='pending').length ? "is-busy" : "available";
         let txt = blk ? "X" : mine ? (mine.status==='valid'?"Confirmé":"Attente") : val.length>=doc.capacity ? "Plein" : `${val.length}/${doc.capacity}`;
         if(d.s===curD && h<=curH) cls += " past";
-        // Condition pour rendre cliquable
         const clickable = isDoc ? true : (!blk && (val.length < doc.capacity || mine));
         htm += `<td class="${cls}" ${clickable ? `onclick="App.handleSlot('${d.s}',${h},${isDoc},${!!mine})"` : ''}>${txt}</td>`;
       });
@@ -435,7 +529,10 @@ const App = {
     if(this.activeDoc && act==='pageDocSpace') { this.renderCalendar('docCalContainer',true); this.renderDocApps(); $('docNotifDot').style.display=(this.activeDoc.appointments||[]).some(a=>a.status==='pending')?'inline-block':'none'; }
     if(this.selectedDoc && act==='pageCalPatient') this.renderCalendar('calPatientContainer',false);
     if(this.activePatient && act==='pagePatientSpace') this.renderPatientApps();
-    if(act==='pageAdmin') $('notifDot').style.display=this.appData.pendingPatients?.length?'inline-block':'none';
+    if(act==='pageAdmin') {
+      $('notifDot').style.display=this.appData.pendingPatients?.length?'inline-block':'none';
+      this.renderAdminsList();
+    }
   },
 
   closeModals() { $$('.internal-modal').forEach(m=>m.classList.remove('modal-show')); },
@@ -460,10 +557,7 @@ const App = {
 window.App = App;
 App.init();
 
-// Enregistrement du service worker (si présent)
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
 </script>
-
-<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));}</script>
 </body>
 </html>
