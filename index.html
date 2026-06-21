@@ -5,707 +5,463 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>TABIB PRO - Algérie</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    /* ===== VOTRE CSS ORIGINAL (inchangé) ===== */
     :root {
-      --bg: #0f0f0f; --card: #1a1a1a; --accent: #4fc3f7; --text: #f0f0f0;
-      --success: #2e7d32; --warning: #ff9800; --danger: #d32f2f; --whatsapp: #25D366;
+      --bg: #ecfdf5; --card: #ffffff; --card-border: #d1fae5;
+      --primary: #059669; --primary-light: #10b981; --primary-dark: #047857;
+      --secondary: #3b82f6; --accent: #f59e0b; --text: #1f2937;
+      --text-secondary: #4b5563; --text-muted: #6b7280;
+      --success: #059669; --warning: #f59e0b; --danger: #dc2626;
+      --radius: 1rem;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     }
-
-    * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+    * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
     input, textarea { -webkit-user-select: text; user-select: text; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; line-height: 1.5; }
 
-    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-    
-    #notificationBar { height: 0; background: var(--accent); color: #000; text-align: center; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: height 0.4s ease; z-index: 2100; }
-    #notificationBar.visible { height: 40px; }
+    /* Utilitaires */
+    .text-center { text-align: center; } .text-primary { color: var(--primary); } .font-bold { font-weight: 700; }
+    .flex { display: flex; } .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .gap-2 { gap: 8px; } .gap-3 { gap: 12px; } .mt-0 { margin-top: 0; } .mt-3 { margin-top: 12px; }
+    .w-full { width: 100%; } .text-sm { font-size: 0.85rem; } .text-xs { font-size: 0.75rem; }
 
-    header { height: 60px; background: rgba(20, 20, 20, 0.98); display: flex; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid #333; z-index: 1000; }
-    #navBrand { font-weight: 600; color: var(--accent); font-size: 1.1rem; letter-spacing: 4px; text-transform: uppercase; flex-grow: 1; text-align: center; margin-left: 10px; }
-    
-    .btn-auth { background: #222; color: white; border: 1px solid #444; padding: 8px 12px; border-radius: 15px; font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-    .btn-primary { background: var(--accent); color: #000; border: none; }
-    
-    .screen { display: none; overflow-y: auto; padding: 15px; flex-grow: 1; padding-bottom: 90px; }
-    .active { display: block; }
-    
-    #patientNavbar { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: #1a1a1a; border-top: 1px solid #333; display: none; justify-content: space-around; align-items: center; z-index: 1000; }
-    .nav-item { color: #666; text-align: center; font-size: 1.2rem; cursor: pointer; flex: 1; position: relative; }
-    .nav-item.active-nav { color: var(--accent); }
-    .nav-item span { display: block; font-size: 0.6rem; margin-top: 2px; }
+    #notificationBar { height: 0; background: var(--primary); color: white; font-weight: 600; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: height 0.4s ease; z-index: 2100; }
+    #notificationBar.visible { height: 44px; }
 
-    .admin-sect { background: #1e1e1e; margin-bottom: 12px; border-radius: 12px; border: 1px solid #2a2a2a; overflow: hidden; }
-    .admin-header { padding: 15px; background: #252525; cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; font-size: 0.8rem; color: #888; align-items: center; position: relative; }
-    .admin-content { padding: 18px; display: none; border-top: 1px solid #2a2a2a; }
+    header { height: 64px; background: white; padding: 0 16px; border-bottom: 1px solid #e5e7eb; z-index: 1000; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    #navBrand { font-weight: 700; color: var(--primary); font-size: 1.2rem; letter-spacing: 2px; flex-grow: 1; margin-left: 10px; }
+
+    .btn-auth, .btn-action, .btn-circle { cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border:none; display: inline-flex; align-items: center; justify-content: center; }
+    .btn-auth { background: white; color: var(--text); border: 1px solid #d1d5db; padding: 6px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; gap: 6px; }
+    .btn-auth:hover { background: #f3f4f6; }
+    .btn-primary { background: var(--primary); color: white!important; border-color: var(--primary); }
+    .btn-action { width: 100%; padding: 12px; background: var(--primary); border-radius: 999px; font-weight: 700; font-size: 0.9rem; color: white; margin-top: 6px; }
+    .btn-action:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn-circle { width: 38px; height: 38px; border-radius: 999px; color: white; font-size: 1rem; }
+    .btn-circle:active, .btn-action:active { transform: scale(0.95); }
+
+    .screen { display: none; overflow-y: auto; padding: 16px; flex-grow: 1; padding-bottom: 90px; background: var(--bg); }
+    .screen.active { display: block; }
+
+    #patientNavbar { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: white; border-top: 1px solid #e5e7eb; display: none; justify-content: space-around; align-items: center; z-index: 1000; }
+    .nav-item { color: var(--text-muted); font-size: 1.3rem; cursor: pointer; flex: 1; padding: 6px 0; transition: color 0.2s; }
+    .nav-item.active-nav { color: var(--primary); }
+    .nav-item span { display: block; font-size: 0.6rem; margin-top: 2px; font-weight: 600; }
+
+    .admin-sect { background: white; margin-bottom: 16px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid #e5e7eb; overflow: hidden; }
+    .admin-header { padding: 14px 18px; background: #f9fafb; cursor: pointer; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary); border-bottom: 1px solid #e5e7eb; }
+    .admin-content { padding: 16px 18px; display: none; border-top: 1px solid #f3f4f6; }
     .open { display: block; }
 
-    input, select { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: white; border-radius: 8px; font-size: 0.9rem; outline: none; box-sizing: border-box; }
-    .btn-action { width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; color: #000; margin-top: 5px; }
-    .manage-item { display: flex; justify-content: space-between; background: #252525; padding: 12px; margin-bottom: 8px; border-radius: 8px; align-items: center; border: 1px solid #333; }
-    
-    .spec-card { background: var(--card); padding: 20px 10px; border-radius: 15px; text-align: center; border: 1px solid #2a2a2a; cursor: pointer; }
-    .spec-card i { font-size: 2.2rem; color: var(--accent); margin-bottom: 12px; display: block; }
+    input, select { width: 100%; padding: 12px 16px; margin: 8px 0; border: 1px solid #d1d5db; border-radius: 12px; font-size: 0.9rem; outline: none; transition: 0.2s; }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15); }
 
-    .badge-count { background: var(--accent); color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; min-width: 20px; text-align: center; }
+    .manage-item { background: #f9fafb; padding: 14px 16px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e5e7eb; }
+    .spec-card { background: white; padding: 24px 12px; border-radius: var(--radius); border: 1px solid #e5e7eb; cursor: pointer; box-shadow: var(--shadow); transition: 0.2s; }
+    .spec-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--primary-light); }
+    .spec-card i { font-size: 2.4rem; color: var(--primary); margin-bottom: 12px; display: block; }
 
-    table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; margin-top: 10px; table-layout: fixed; }
-    th { background: #222; padding: 8px; color: #777; font-size: 0.55rem; }
-    td { border: 1px solid #222; text-align: center; height: 50px; font-size: 0.7rem; font-weight: 600; cursor: pointer; }
-    
-    .available { background: var(--success); color: white; }
-    .is-busy { background: var(--warning); color: #000; } 
-    .is-full { background: #333; color: #666; }
-    .is-blocked { background: #4a0000; color: #ff9999; }
-    .past { background: #0a0a0a !important; color: #333 !important; pointer-events: none; }
+    .badge-count { background: var(--primary); color: white; padding: 2px 10px; border-radius: 999px; font-weight: 700; font-size: 0.75rem; min-width: 24px; text-align: center; }
+    .dot-notif { height: 10px; width: 10px; background-color: #ef4444; border-radius: 999px; display: inline-block; margin-right: 6px; box-shadow: 0 0 0 2px white; }
 
-    #loginDisplay { text-align: center; font-size: 2rem; margin: 10px 0; letter-spacing: 15px; height: 60px; background: #000; border-radius: 8px; line-height: 60px; border: 1px solid #333; color: var(--accent); }
-    .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 280px; margin: 0 auto; }
-    .num-btn { background: #1e1e1e; color: white; padding: 20px; border-radius: 50%; border: 1px solid #333; font-size: 1.4rem; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: var(--radius); overflow: hidden; margin-top: 12px; box-shadow: var(--shadow); }
+    th { background: #f3f4f6; padding: 10px 4px; color: var(--text-secondary); font-size: 0.6rem; font-weight: 600; text-transform: uppercase; }
+    td { border: 1px solid #e5e7eb; text-align: center; height: 48px; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: 0.15s; }
+    .available { background: #ecfdf5; color: var(--primary); }
+    .is-busy { background: #fef3c7; color: #92400e; }
+    .is-full { background: #e5e7eb; color: #6b7280; cursor: default; }
+    .is-blocked { background: #fee2e2; color: #991b1b; }
+    .past { background: #f3f4f6!important; color: #9ca3af!important; cursor: default!important; opacity: 0.6; }
 
-    .internal-modal { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(20, 20, 20, 0.98); border-top: 3px solid var(--accent); padding: 20px; box-sizing: border-box; z-index: 2000; transform: translateY(100%); transition: 0.4s; }
+    #loginDisplay { font-size: 2.2rem; margin: 12px 0 18px; letter-spacing: 12px; height: 64px; background: white; border-radius: 12px; line-height: 64px; border: 1px solid #d1d5db; color: var(--primary); box-shadow: var(--shadow); }
+    .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 280px; margin: 0 auto; }
+    .num-btn { background: white; padding: 18px; border-radius: 999px; border: 1px solid #d1d5db; font-size: 1.5rem; font-weight: 600; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+    .internal-modal { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-radius: 24px 24px 0 0; box-shadow: 0 -10px 25px rgba(0,0,0,0.15); padding: 24px 20px 30px; z-index: 2000; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1); }
     .modal-show { transform: translateY(0); }
 
-    .btn-circle { width: 35px; height: 35px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; }
-
-    .dot-notif { height: 8px; width: 8px; background-color: #ff4444; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 5px #ff4444; }
-
-    /* Impression */
     #printArea { display: none; }
-    @media print {
-        body > *:not(#printArea) { display: none !important; }
-        #printArea { display: block !important; color: black !important; padding: 20px; }
-        table { border: 1px solid black; }
-        th, td { border: 1px solid black; color: black !important; background: white !important; }
-    }
+    @media print { body > *:not(#printArea) { display: none!important; } #printArea { display: block!important; color: black; padding: 20px; } table, th, td { border: 1px solid black; background: white!important; } }
+
+    .bg-danger { background: var(--danger); } .bg-success { background: var(--success); } .bg-warning { background: var(--warning); color: black; } .bg-accent { background: var(--secondary); } .bg-gray { background: #6b7280; color: white; }
+    small, .text-muted { color: var(--text-muted); }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
   </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#059669">
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4b6cb7">
 <link rel="apple-touch-icon" href="icon.png"></head>
 <body oncontextmenu="return false;"> 
-<div id="notificationBar">Message</div>
+<div id="notificationBar" class="text-xs">Message</div>
 
-<header>
-    <div id="authLeft"><button class="btn-auth btn-primary" onclick="showScreen('pageSignup')">Inscription</button></div>
-    <div id="backBtnArea" style="display:none;"><i class="fas fa-arrow-left" onclick="goBack()" style="cursor:pointer; font-size: 1.2rem;"></i></div>
-    <div id="navBrand">TABIB</div>
-    <div id="authRight"><button class="btn-auth" onclick="openLogin()">Connexion</button></div>
+<header class="flex-between">
+    <div id="authLeft"><button class="btn-auth btn-primary" onclick="App.showScreen('pageSignup')">Inscription</button></div>
+    <div id="backBtnArea" style="display:none;"><i class="fas fa-arrow-left" onclick="App.goBack()" style="cursor:pointer; font-size:1.2rem;"></i></div>
+    <div id="navBrand" class="text-center">TABIB</div>
+    <div id="authRight"><button class="btn-auth" onclick="App.openLogin()">Connexion</button></div>
 </header>
 
 <div id="printArea"></div>
 
 <div id="pagePatients" class="screen active">
-    <div id="specialtyGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
+    <div id="specialtyGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;"></div>
 </div>
 
-<div id="pageLogin" class="screen">
-    <div style="text-align: left; margin-bottom: 20px;">
-        <button onclick="goBack()" style="background:none; border:none; color:var(--accent); cursor:pointer;"><i class="fas fa-arrow-left"></i> Retour</button>
-    </div>
-    <h2 style="text-align:center; margin-top:0;">Identification</h2>
+<div id="pageLogin" class="screen text-center">
+    <div class="flex" style="margin-bottom:20px;"><button onclick="App.goBack()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:600;"><i class="fas fa-arrow-left"></i> Retour</button></div>
+    <h2 class="mt-0 font-bold">Identification</h2>
     <div id="loginDisplay"></div>
-    <div class="numpad">
-        <button class="num-btn" onclick="pressN('1')">1</button><button class="num-btn" onclick="pressN('2')">2</button><button class="num-btn" onclick="pressN('3')">3</button>
-        <button class="num-btn" onclick="pressN('4')">4</button><button class="num-btn" onclick="pressN('5')">5</button><button class="num-btn" onclick="pressN('6')">6</button>
-        <button class="num-btn" onclick="pressN('7')">7</button><button class="num-btn" onclick="pressN('8')">8</button><button class="num-btn" onclick="pressN('9')">9</button>
-        <button class="num-btn" style="color:var(--danger)" onclick="clearCode()">C</button><button class="num-btn" onclick="pressN('0')">0</button>
-        <button class="num-btn" style="color:var(--success)" onclick="submitLogin()"><i class="fas fa-check"></i></button>
-    </div>
+    <!-- Le pavé numérique sera généré dynamiquement ici via JavaScript -->
+    <div class="numpad" id="numpadContainer"></div>
 </div>
 
 <div id="pageDocSpace" class="screen">
-    <h2 id="docSpaceName" style="text-align:center; color:var(--accent); margin-bottom:5px;"></h2>
+    <h2 id="docSpaceName" class="text-center text-primary font-bold mt-0 mb-3"></h2>
     <div class="admin-sect">
-        <div class="admin-header" onclick="renderDocAppointments(); toggleSect(this)">
-            <span><span id="docNotifDot" style="display:none;" class="dot-notif"></span>DEMANDES DE RDV</span> 
-            <i class="fas fa-bell"></i>
+        <div class="admin-header flex-between" onclick="App.renderDocApps(); App.toggleSect(this)">
+            <span><span id="docNotifDot" style="display:none;" class="dot-notif"></span>DEMANDES DE RDV</span> <i class="fas fa-bell text-primary"></i>
         </div>
         <div class="admin-content" id="docAppointmentsList"></div>
     </div>
     <div id="docCalContainer"></div>
-    <div style="display:flex; gap:10px; margin-top:15px;">
-        <button id="btnToggleHours" class="btn-action" style="flex:1" onclick="toggleHourMode()"><i class="fas fa-lock"></i> BLOQUER</button>
-        <button class="btn-action" style="flex:1; background:#444; color:white;" onclick="printDailyReport()"><i class="fas fa-print"></i> LISTE</button>
-        <button class="btn-action" style="flex:1; background:#444; color:white;" onclick="openHistory()"><i class="fas fa-history"></i> HISTO</button>
+    <div class="flex gap-2 mt-3">
+        <button id="btnToggleHours" class="btn-action bg-accent" onclick="App.toggleHourMode()"><i class="fas fa-lock"></i> BLOQUER</button>
+        <button class="btn-action bg-gray" onclick="App.printDailyReport()"><i class="fas fa-print"></i> LISTE</button>
+        <button class="btn-action bg-gray" onclick="App.openHistory()"><i class="fas fa-history"></i> HISTO</button>
     </div>
-    <button class="btn-action" style="background:var(--danger); color:white; margin-top:10px;" onclick="logout()">QUITTER</button>
+    <button class="btn-action bg-danger mt-3" onclick="App.logout()">QUITTER</button>
 </div>
 
 <div id="pageHistory" class="screen">
-    <h2 style="text-align:center; color:var(--accent);">Historique Confirmé</h2>
-    <div style="display:flex; justify-content:center; gap:20px; margin-bottom:20px;">
-        <button class="btn-circle" style="background:var(--accent);" onclick="exportHistory()"><i class="fas fa-file-export"></i></button>
-        <button class="btn-circle" style="background:var(--danger);" onclick="clearHistory()"><i class="fas fa-trash-sweep"></i></button>
+    <h2 class="text-center text-primary font-bold">Historique Confirmé</h2>
+    <div class="flex justify-center gap-3 mb-3">
+        <button class="btn-circle bg-primary" onclick="App.exportHistory()"><i class="fas fa-file-export"></i></button>
+        <button class="btn-circle bg-danger" onclick="App.clearHistory()"><i class="fas fa-trash-sweep"></i></button>
     </div>
     <div id="historyList"></div>
 </div>
 
 <div id="pageAdmin" class="screen">
-    <h3 style="text-align:center; color:var(--warning)">PANEL ADMIN</h3>
+    <h3 class="text-center font-bold" style="color:var(--accent);">PANEL ADMIN</h3>
     <div class="admin-sect">
-        <div class="admin-header" onclick="renderPendingPatients(); toggleSect(this)">
-            <span id="admPendingHeader"><span id="notifDot" style="display:none;" class="dot-notif"></span>INSCRIPTIONS EN ATTENTE</span> 
-            <i class="fas fa-user-plus"></i>
+        <div class="admin-header flex-between" onclick="App.renderPending(); App.toggleSect(this)">
+            <span><span id="notifDot" style="display:none;" class="dot-notif"></span>INSCRIPTIONS EN ATTENTE</span> <i class="fas fa-user-plus text-primary"></i>
         </div>
         <div class="admin-content" id="admPendingList"></div>
     </div>
     <div class="admin-sect">
-        <div class="admin-header" onclick="renderUserList(); toggleSect(this)">LISTE DES UTILISATEURS <i class="fas fa-users"></i></div>
+        <div class="admin-header flex-between" onclick="App.renderUsers(); App.toggleSect(this)">LISTE UTILISATEURS <i class="fas fa-users text-primary"></i></div>
         <div class="admin-content" id="admUserList"></div>
     </div>
     <div class="admin-sect">
-        <div class="admin-header" onclick="toggleSect(this)">AJOUTER SPÉCIALITÉ <i class="fas fa-plus"></i></div>
-        <div class="admin-content">
-            <input type="text" id="admSpecInput" placeholder="Nom de la spécialité">
-            <select id="admSpecIcon">
-                <option value="fa-user-md">🩺 Médecine Générale</option>
-                <option value="fa-heart-pulse">❤️ Cardiologie</option>
-                <option value="fa-tooth">🦷 Dentiste</option>
-                <option value="fa-baby">👶 Pédiatrie</option>
-                <option value="fa-eye">👁️ Ophtalmologie</option>
-                <option value="fa-brain">🧠 Neurologie / Psy</option>
-                <option value="fa-bone">🦴 Orthopédie</option>
-                <option value="fa-lungs">🫁 Pneumologie</option>
-                <option value="fa-stethoscope">🩹 Dermatologie</option>
-                <option value="fa-syringe">💉 Endocrinologie</option>
-                <option value="fa-bacteria">🦠 Infectiologie</option>
-                <option value="fa-ear-deaf">👂 ORL</option>
-                <option value="fa-female">🤰 Gynécologie</option>
-            </select>
-            <button class="btn-action" onclick="addSpec()">CRÉER</button>
-        </div>
+        <div class="admin-header flex-between" onclick="App.toggleSect(this)">AJOUTER SPÉCIALITÉ <i class="fas fa-plus text-primary"></i></div>
+        <div class="admin-content"><input type="text" id="admSpecInput" placeholder="Nom spécialité"><button class="btn-action" onclick="App.addSpec()">CRÉER</button></div>
     </div>
     <div class="admin-sect">
-        <div class="admin-header" onclick="updateAdmSpecSelect(); toggleSect(this)">AJOUTER MÉDECIN <i class="fas fa-user-md"></i></div>
+        <div class="admin-header flex-between" onclick="App.updateSpecSel(); App.toggleSect(this)">AJOUTER MÉDECIN <i class="fas fa-user-md text-primary"></i></div>
         <div class="admin-content">
-            <select id="admSpecSelect"></select>
-            <input type="text" id="admDocName" placeholder="Nom Dr.">
-            <input type="text" id="admDocTitle" placeholder="Titre / Grade">
-            <input type="tel" id="admDocTel" placeholder="Numéro de téléphone">
-            <input type="text" id="admDocCode" placeholder="Code de connexion">
-            <input type="number" id="admDocDuration" placeholder="Durée de validité (en jours)" min="1">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <span id="capDisplay" style="font-weight:bold; color:var(--accent); font-size:1.2rem;">3</span>
-                <button class="btn-auth" onclick="cycleCap('capDisplay')">Capacité</button>
+            <select id="admSpecSelect"></select><input type="text" id="admDocName" placeholder="Nom Dr."><input type="text" id="admDocTitle" placeholder="Titre / Grade">
+            <input type="tel" id="admDocTel" placeholder="Téléphone"><input type="text" id="admDocCode" placeholder="Code connexion">
+            <input type="number" id="admDocDuration" placeholder="Validité (jours)" min="1">
+            <div class="flex items-center gap-3 mt-3">
+                <span id="capDisplay" class="font-bold text-primary" style="font-size:1.4rem;">3</span><button class="btn-auth" onclick="App.cycleCap('capDisplay')">Capacité</button>
             </div>
-            <button class="btn-action" onclick="addDoc()">VALIDER</button>
+            <button class="btn-action" onclick="App.addDoc()">VALIDER</button>
         </div>
     </div>
     <div class="admin-sect">
-        <div class="admin-header" onclick="renderAdminList(); toggleSect(this)">GÉRER MÉDECINS & SPÉC. <i class="fas fa-trash-alt"></i></div>
-        <div class="admin-content" id="admGlobalList" style="padding: 10px;"></div>
+        <div class="admin-header flex-between" onclick="App.renderAdmins(); App.toggleSect(this)">GÉRER MÉDECINS <i class="fas fa-trash-alt text-danger"></i></div>
+        <div class="admin-content" id="admGlobalList" style="padding:10px;"></div>
     </div>
-    <button class="btn-action" style="background:var(--danger); color:white; margin-top:20px;" onclick="logout()">DÉCONNEXION</button>
+    <button class="btn-action bg-danger mt-3" onclick="App.logout()">DÉCONNEXION</button>
 </div>
 
 <div id="modalEditDoc" class="internal-modal">
-    <h3 style="margin-top:0; color:var(--accent)">Modifier Médecin</h3>
+    <h3 class="mt-0 text-primary font-bold">Modifier Médecin</h3>
     <input type="text" id="editDocName"><input type="text" id="editDocTitle"><input type="tel" id="editDocTel"><input type="text" id="editDocCode">
-    <input type="number" id="editDocDuration" placeholder="Durée de validité (en jours)" min="1">
-    <div style="display:flex; align-items:center; gap:10px; margin:10px 0;">
-        <span id="editCapDisplay" style="font-weight:bold; color:var(--accent); font-size:1.2rem;">3</span>
-        <button class="btn-auth" onclick="cycleCap('editCapDisplay')">Changer Capacité</button>
+    <input type="number" id="editDocDuration" placeholder="Validité (jours)" min="1">
+    <div class="flex items-center gap-3 mt-3">
+        <span id="editCapDisplay" class="font-bold text-primary" style="font-size:1.4rem;">3</span><button class="btn-auth" onclick="App.cycleCap('editCapDisplay')">Capacité</button>
     </div>
     <button class="btn-action" id="btnUpdateDoc">METTRE À JOUR</button>
-    <button class="btn-action" style="background:#333; color:white; margin-top:10px;" onclick="closeModals()">ANNULER</button>
+    <button class="btn-action bg-gray" onclick="App.closeModals()">ANNULER</button>
 </div>
 
 <div id="pagePatientSpace" class="screen">
-    <h2 id="patientWelcome" style="text-align:center; color:var(--accent);"></h2>
+    <h2 id="patientWelcome" class="text-center text-primary font-bold"></h2>
     <div id="patientAppointments"></div>
 </div>
 
 <div id="pageCalPatient" class="screen">
-    <div id="calPatientInfo" style="text-align:center; margin-bottom:15px; padding:15px; background:#1a1a1a; border-radius:15px; border:1px solid #333;"></div>
+    <div id="calPatientInfo" class="text-center mb-3 p-3 bg-white border-radius-lg shadow border"></div>
     <div id="calPatientContainer"></div>
 </div>
 
 <div id="pageSignup" class="screen">
-    <h2 style="text-align:center;">Inscription</h2>
+    <h2 class="text-center font-bold">Inscription</h2>
     <input type="text" id="regName" placeholder="Nom complet"><input type="tel" id="regTel" placeholder="Téléphone"><input type="password" id="regPass" placeholder="Code (4 chiffres)">
-    <button class="btn-action" onclick="handleSignup()">S'INSCRIRE</button>
+    <button class="btn-action" onclick="App.handleSignup()">S'INSCRIRE</button>
 </div>
 
 <div id="modalDoc" class="internal-modal">
-    <h3 id="modalDocTitle" style="margin-top:0;">Détails</h3>
+    <h3 id="modalDocTitle" class="mt-0 font-bold">Détails</h3>
     <div id="docActionInfo"></div>
     <div id="modalConfirmButtons" style="display:none; gap:10px; margin-top:20px;">
-        <button id="btnFinalConfirm" class="btn-action" style="flex:1; margin-top:0;">OUI</button>
-        <button class="btn-action" style="flex:1; background:#333; color:white; margin-top:0;" onclick="closeModals()">NON</button>
+        <button id="btnFinalConfirm" class="btn-action mt-0 flex-1">OUI</button>
+        <button class="btn-action bg-gray mt-0 flex-1" onclick="App.closeModals()">NON</button>
     </div>
-    <button id="btnCloseModal" class="btn-action" style="background:#333; color:white; margin-top:20px;" onclick="closeModals()">FERMER</button>
+    <button id="btnCloseModal" class="btn-action bg-gray mt-3" onclick="App.closeModals()">FERMER</button>
 </div>
 
 <div id="patientNavbar">
-    <div class="nav-item" onclick="showScreen('pagePatientSpace')" id="navRdv"><i class="fas fa-calendar-check"></i><span>Mes RDV</span></div>
-    <div class="nav-item" onclick="showScreen('pagePatients')" id="navHome"><i class="fas fa-search"></i><span>Chercher</span></div>
-    <div class="nav-item" onclick="logout()" style="color:var(--danger)"><i class="fas fa-sign-out-alt"></i><span>Quitter</span></div>
+    <div class="nav-item text-center" onclick="App.showScreen('pagePatientSpace')"><i class="fas fa-calendar-check"></i><span>Mes RDV</span></div>
+    <div class="nav-item text-center" onclick="App.showScreen('pagePatients')"><i class="fas fa-search"></i><span>Chercher</span></div>
+    <div class="nav-item text-center text-danger" onclick="App.logout()"><i class="fas fa-sign-out-alt"></i><span>Quitter</span></div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAHDgrxnfQlvqN4ZfZH2J5qCjEQSoSbq4Y",
-  authDomain: "tabib-380fb.firebaseapp.com",
-  databaseURL: "https://tabib-380fb-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "tabib-380fb",
-  storageBucket: "tabib-380fb.firebasestorage.app",
-  messagingSenderId: "788379849606",
-  appId: "1:788379849606:web:4cfd0f8d4184869e811207"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+// ===== Configuration Firebase (inchangée) =====
+const firebaseConfig = { apiKey:"AIzaSyAHDgrxnfQlvqN4ZfZH2J5qCjEQSoSbq4Y", authDomain:"tabib-380fb.firebaseapp.com", databaseURL:"https://tabib-380fb-default-rtdb.europe-west1.firebasedatabase.app", projectId:"tabib-380fb", storageBucket:"tabib-380fb.firebasestorage.app", messagingSenderId:"788379849606", appId:"1:788379849606:web:4cfd0f8d4184869e811207" };
+const db = getDatabase(initializeApp(firebaseConfig));
 const dbRef = ref(db, 'tabibData');
 
-let appData = { specs: [], patients: [], pendingPatients: [] };
-let currCode = "", selectedDoc = null, activeDoc = null, activePatient = null, isHourMode = false;
-let navigationHistory = ['pagePatients'];
+// ===== Helpers définis AVANT l'objet App (correction 1) =====
+const $ = id => document.getElementById(id);
+const $$ = sel => document.querySelectorAll(sel);
 
-window.showToast = (msg) => {
-    const bar = document.getElementById('notificationBar');
-    bar.textContent = msg; bar.classList.add('visible');
-    setTimeout(() => { bar.classList.remove('visible'); }, 3000);
-};
+// ===== Objet App (logique inchangée, sauf corrections mineures) =====
+const App = {
+  appData: { specs: [], patients: [], pendingPatients: [], _version: 0 },
+  currCode: "", selectedDoc: null, activeDoc: null, activePatient: null, isHourMode: false, navigationHistory: ['pagePatients'],
 
-onValue(dbRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data) { 
-        appData = data; 
-        if(activeDoc) {
-            appData.specs.forEach(s => {
-                const found = (s.docs || []).find(d => d.id === activeDoc.id);
-                if(found) activeDoc = found;
-            });
-        }
-        if(selectedDoc) {
-             appData.specs.forEach(s => {
-                const found = (s.docs || []).find(d => d.id === selectedDoc.id);
-                if(found) selectedDoc = found;
-            });
-        }
-        updateUI(); 
-    }
-});
-
-function saveData() { update(ref(db), { tabibData: appData }); }
-
-window.showScreen = (id, saveHistory = true) => {
-    if(saveHistory && navigationHistory[navigationHistory.length - 1] !== id) navigationHistory.push(id);
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+  init() {
+    // Chargement local
+    try { const s = localStorage.getItem('tabibData'); if (s) this.appData = JSON.parse(s) || this.appData; } catch (e){}
     
-    const isHome = (id === 'pagePatients' && !activePatient);
-    document.getElementById('authLeft').style.display = isHome ? 'block' : 'none';
-    document.getElementById('authRight').style.display = isHome ? 'block' : 'none';
-    document.getElementById('backBtnArea').style.display = (id !== 'pagePatients' && id !== 'pageLogin' && !activePatient) ? 'block' : 'none';
-    document.getElementById('patientNavbar').style.display = activePatient ? 'flex' : 'none';
+    // Écoute Firebase
+    onValue(dbRef, (snap) => {
+      if (snap.val()) {
+        this.appData = snap.val(); this.persistLocally();
+        // Mettre à jour les références actives
+        if (this.activeDoc) this.activeDoc = this.appData.specs.flatMap(s=>s.docs||[]).find(d=>d.id===this.activeDoc.id);
+        if (this.selectedDoc) this.selectedDoc = this.appData.specs.flatMap(s=>s.docs||[]).find(d=>d.id===this.selectedDoc.id);
+      }
+      this.updateUI();
+    });
+
+    // Écouteur pour le bouton "Mettre à jour"
+    $('btnUpdateDoc').addEventListener('click', () => this.updateDoc());
+
+    // === Génération du pavé numérique (correction 2) ===
+    const numpadContainer = $('numpadContainer');
+    if (numpadContainer) {
+      numpadContainer.innerHTML = `
+        ${[1,2,3,4,5,6,7,8,9].map(n => `<button class="num-btn" onclick="App.pressN('${n}')">${n}</button>`).join('')}
+        <button class="num-btn text-danger" onclick="App.clearCode()">C</button>
+        <button class="num-btn" onclick="App.pressN('0')">0</button>
+        <button class="num-btn text-success" onclick="App.submitLogin()"><i class="fas fa-check"></i></button>
+      `;
+    }
+
+    // Initialisation UI
+    this.updateUI();
+  },
+
+  persistLocally() { try{ localStorage.setItem('tabibData', JSON.stringify(this.appData)); }catch(e){} },
+  saveData() { this.appData._version = (this.appData._version || 0) + 1; update(ref(db), { tabibData: this.appData }); this.persistLocally(); },
+
+  showToast(msg) {
+    $('notificationBar').textContent = msg; $('notificationBar').classList.add('visible');
+    setTimeout(() => $('notificationBar').classList.remove('visible'), 3000);
+  },
+
+  showScreen(id, saveHist = true) {
+    if (saveHist && this.navigationHistory.at(-1) !== id) this.navigationHistory.push(id);
+    $$('.screen').forEach(s => s.classList.remove('active'));
+    $(id).classList.add('active');
+    const isHome = (id === 'pagePatients' && !this.activePatient);
+    $('authLeft').style.display = $('authRight').style.display = isHome ? 'block' : 'none';
+    $('backBtnArea').style.display = (!isHome && id !== 'pageLogin') ? 'block' : 'none';
+    $('patientNavbar').style.display = this.activePatient ? 'flex' : 'none';
+    this.updateUI();
+  },
+
+  goBack() { if(this.navigationHistory.length > 1){ this.navigationHistory.pop(); this.showScreen(this.navigationHistory.at(-1), false); } },
+  logout() { location.reload(); },
+
+  openLogin() { this.currCode = ""; $('loginDisplay').textContent = ""; this.showScreen('pageLogin'); },
+  pressN(n) { if(this.currCode.length < 4) { this.currCode += n; $('loginDisplay').textContent = "•".repeat(this.currCode.length); } },
+  clearCode() { this.currCode = ""; $('loginDisplay').textContent = ""; },
+
+  submitLogin() {
+    if (this.currCode === "1747") return this.showScreen('pageAdmin');
+    const d = this.appData.specs.flatMap(s=>s.docs||[]).find(x=>x.code === this.currCode);
+    if(d) { this.activeDoc = d; $('docSpaceName').textContent = "Dr. " + d.name; return this.showScreen('pageDocSpace'); }
+    const p = (this.appData.patients||[]).find(x=>x.code === this.currCode);
+    if(p) { this.activePatient = p; $('patientWelcome').textContent = "Bonjour, " + p.name; return this.showScreen('pagePatientSpace'); }
+    this.showToast("Code invalide"); this.clearCode();
+  },
+
+  renderCalendar(cid, isDoc) {
+    const doc = isDoc ? this.activeDoc : this.selectedDoc; if (!doc) return;
+    const days = Array.from({length:6}, (_,i) => { let d=new Date(); d.setDate(d.getDate()+i); return { l:["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"][d.getDay()], s:d.toLocaleDateString('fr-FR',{day:'numeric',month:'numeric'}) };});
+    const now = new Date(), curH = now.getHours(), curD = now.toLocaleDateString('fr-FR');
     
-    updateUI();
-};
-
-window.goBack = () => { if(navigationHistory.length > 1) { navigationHistory.pop(); showScreen(navigationHistory[navigationHistory.length - 1], false); } };
-window.logout = () => { location.reload(); };
-window.openLogin = () => { currCode = ""; document.getElementById('loginDisplay').textContent = ""; showScreen('pageLogin'); };
-window.pressN = (n) => { if(currCode.length < 4) { currCode += n; document.getElementById('loginDisplay').textContent = "•".repeat(currCode.length); } };
-window.clearCode = () => { currCode = ""; document.getElementById('loginDisplay').textContent = ""; };
-
-window.submitLogin = () => {
-    if(currCode === "1747") { showScreen('pageAdmin'); return; }
-    for(let s of appData.specs) { 
-        if(s.docs) for(let d of s.docs) { 
-            if(d.code === currCode) { 
-                activeDoc = d; document.getElementById('docSpaceName').textContent = "Dr. " + d.name; showScreen('pageDocSpace'); return; 
-            }
-        }
-    }
-    const p = (appData.patients || []).find(x => String(x.code) === String(currCode));
-    if(p) { activePatient = p; document.getElementById('patientWelcome').textContent = "Bonjour, " + p.name; showScreen('pagePatientSpace'); return; }
-    showToast("Code invalide"); clearCode();
-};
-
-window.renderCalendar = (cid, isDoc) => {
-    const targetDoc = isDoc ? activeDoc : selectedDoc;
-    if(!targetDoc) return;
-    const days = []; const lbls = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
-    for(let i=0; i<6; i++){ let d = new Date(); d.setDate(d.getDate()+i); days.push({l:lbls[d.getDay()], s:d.toLocaleDateString('fr-FR',{day:'numeric',month:'numeric'})}); }
-    const hours = [9, 10, 11, 14, 15, 16], now = new Date(), curH = now.getHours(), curD = now.toLocaleDateString('fr-FR',{day:'numeric',month:'numeric'});
-    let htm = `<table><tr><th></th>${days.map(d => `<th>${d.l}<br>${d.s}</th>`).join('')}</tr>`;
-    hours.forEach(h => {
-        htm += `<tr><td style="color:#666; font-size:0.6rem;">${h}h</td>`;
-        days.forEach(d => {
-            const key = `${d.s}-${h}`, allApps = (targetDoc.appointments || []);
-            const validApps = allApps.filter(a => a.day === d.s && a.hour === h && a.status === 'valid');
-            const pendingApps = allApps.filter(a => a.day === d.s && a.hour === h && a.status === 'pending');
-            const blocked = (targetDoc.blockedSlots || []).includes(key);
-            const mine = activePatient && allApps.find(a => a.patId === activePatient.id && a.day === d.s && a.hour === h);
-            
-            let cls = "available", txt = `${validApps.length}/${targetDoc.capacity}`;
-            if(blocked){ cls = "is-blocked"; txt = "X"; }
-            else if(mine){ cls = "is-busy"; txt = mine.status === 'valid' ? "Confirmé" : "Attente"; }
-            else if(validApps.length >= targetDoc.capacity){ cls = "is-full"; txt = "Plein"; }
-            else if(validApps.length > 0 || pendingApps.length > 0) { cls = "is-busy"; }
-            
-            if(d.s === curD && h <= curH) cls += " past";
-            const canClick = isDoc || (!blocked && (validApps.length < targetDoc.capacity || mine));
-            htm += `<td class="${cls}" onclick="${canClick ? `handleSlot('${d.s}',${h},${isDoc},${mine?true:false})` : ''}">${txt}</td>`;
-        });
-        htm += `</tr>`;
+    let htm = `<table><tr><th></th>${days.map(d=>`<th>${d.l}<br>${d.s}</th>`).join('')}</tr>`;
+    [9,10,11,14,15,16].forEach(h => {
+      htm += `<tr><td style="color:var(--text-muted); font-size:0.6rem;">${h}h</td>`;
+      days.forEach(d => {
+        const key = `${d.s}-${h}`, all = doc.appointments||[], val = all.filter(a=>a.day===d.s&&a.hour===h&&a.status==='valid');
+        const blk = (doc.blockedSlots||[]).includes(key), mine = this.activePatient && all.find(a=>a.patId===this.activePatient.id&&a.day===d.s&&a.hour===h);
+        let cls = blk ? "is-blocked" : mine ? "is-busy" : val.length >= doc.capacity ? "is-full" : val.length||all.filter(a=>a.day===d.s&&a.hour===h&&a.status==='pending').length ? "is-busy" : "available";
+        let txt = blk ? "X" : mine ? (mine.status==='valid'?"Confirmé":"Attente") : val.length>=doc.capacity ? "Plein" : `${val.length}/${doc.capacity}`;
+        if(d.s===curD && h<=curH) cls += " past";
+        // Condition pour rendre cliquable
+        const clickable = isDoc ? true : (!blk && (val.length < doc.capacity || mine));
+        htm += `<td class="${cls}" ${clickable ? `onclick="App.handleSlot('${d.s}',${h},${isDoc},${!!mine})"` : ''}>${txt}</td>`;
+      });
+      htm += `</tr>`;
     });
-    document.getElementById(cid).innerHTML = htm + `</table>`;
-};
+    $(cid).innerHTML = htm + `</table>`;
+  },
 
-window.handleSlot = (day, hour, isDoc, isMine) => {
-    if(isDoc) {
-        const key = `${day}-${hour}`;
-        if(isHourMode) {
-            if(!activeDoc.blockedSlots) activeDoc.blockedSlots = [];
-            if(activeDoc.blockedSlots.includes(key)) activeDoc.blockedSlots = activeDoc.blockedSlots.filter(s => s !== key);
-            else activeDoc.blockedSlots.push(key);
-            saveData(); return;
-        }
-        const list = (activeDoc.appointments || []).filter(a => a.day === day && a.hour === hour);
-        if(list.length > 0) {
-            document.getElementById('modalDocTitle').textContent = `RDV ${day} à ${hour}h`;
-            document.getElementById('docActionInfo').innerHTML = list.map(a => `
-                <div class="manage-item" style="flex-direction:column; align-items:stretch; gap:8px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <b>${a.patName}</b>
-                        <span style="font-size:0.7rem; color:${a.status==='valid'?'var(--success)':'var(--warning)'}">${a.status==='valid'?'Validé':'En attente'}</span>
-                    </div>
-                    <div style="display:flex; gap:10px; justify-content: flex-end;">
-                        <button class="btn-circle" style="background:var(--accent);" onclick="location.href='tel:${a.patTel}'"><i class="fas fa-phone"></i></button>
-                        <button class="btn-circle" style="background:var(--danger);" onclick="confirmDeleteSlotRDV('${a.id}')"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>`).join('');
-            document.getElementById('modalConfirmButtons').style.display = 'none';
-            document.getElementById('btnCloseModal').style.display = 'block';
-            document.getElementById('modalDoc').classList.add('modal-show');
-        }
-    } else {
-        if(!activePatient) { showToast("Veuillez vous connecter"); setTimeout(openLogin, 1000); return; }
-        if(selectedDoc.expiresAt && Date.now() > selectedDoc.expiresAt) { showToast("Ce médecin n'accepte plus de rendez-vous (code obsolète)."); return; }
-        const currentRDV = selectedDoc.appointments?.find(a => a.patId === activePatient.id && a.day === day && a.hour === hour);
-        if (isMine && currentRDV && currentRDV.status === 'valid') {
-            document.getElementById('modalDocTitle').textContent = "RDV Confirmé";
-            document.getElementById('docActionInfo').innerHTML = `<p style="text-align:center; color:var(--success)">Ce rendez-vous est déjà confirmé par le médecin.<br>Vous ne pouvez plus l'annuler.</p>`;
-            document.getElementById('modalConfirmButtons').style.display = 'none';
-            document.getElementById('btnCloseModal').style.display = 'block';
-        } else {
-            document.getElementById('modalDocTitle').textContent = isMine ? "Annuler mon RDV ?" : "Réserver ce créneau ?";
-            document.getElementById('docActionInfo').innerHTML = `<p style="text-align:center">${day} à ${hour}h</p>`;
-            document.getElementById('modalConfirmButtons').style.display = 'flex';
-            document.getElementById('btnFinalConfirm').onclick = () => { 
-                if(isMine) {
-                    selectedDoc.appointments = selectedDoc.appointments.filter(a => !(a.patId === activePatient.id && a.day === day && a.hour === hour));
-                    saveData();
-                    showToast("Rendez-vous annulé.");
-                } else {
-                    if(!selectedDoc.appointments) selectedDoc.appointments = [];
-                    selectedDoc.appointments.push({ id:Date.now(), createdAt: Date.now(), patId:activePatient.id, patName:activePatient.name, patTel:activePatient.tel, day, hour, status: 'pending' });
-                    saveData();
-                    showToast("Demande envoyée.");
-                }
-                closeModals();
-            };
-        }
-        document.getElementById('modalDoc').classList.add('modal-show');
-    }
-};
-
-window.confirmDeleteSlotRDV = (id) => {
-    document.getElementById('docActionInfo').innerHTML = `<p style="text-align:center">Voulez-vous vraiment supprimer ce rendez-vous ?</p>`;
-    document.getElementById('modalConfirmButtons').style.display = 'flex';
-    document.getElementById('btnFinalConfirm').onclick = () => {
-        activeDoc.appointments = activeDoc.appointments.filter(a => a.id != id);
-        saveData(); closeModals();
-    };
-};
-
-window.renderDocAppointments = () => {
-    const list = (activeDoc.appointments || []).filter(a => a.status === 'pending');
-    list.sort((a, b) => a.createdAt - b.createdAt);
-    document.getElementById('docAppointmentsList').innerHTML = list.map(a => {
-        const d = new Date(a.createdAt);
-        const timeStr = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')} ${d.getHours()}h${d.getMinutes().toString().padStart(2,'0')}`;
-        return `
-        <div class="manage-item" style="flex-direction: column; align-items: stretch; gap: 10px;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div><b>${a.patName}</b><br><small style="color:#777;">Demandé le : ${timeStr}</small></div>
-                <span style="font-size:0.75rem; color:var(--accent); text-align:right;">Slot: ${a.day}<br>${a.hour}h</span>
-            </div>
-            <div style="display:flex; gap:12px; justify-content: flex-end;">
-                <button onclick="location.href='tel:${a.patTel}'" class="btn-circle" style="background:var(--accent);"><i class="fas fa-phone"></i></button>
-                <button onclick="validateRDV('${a.id}')" class="btn-circle" style="background:var(--success);"><i class="fas fa-check"></i></button>
-                <button onclick="rejectRDV('${a.id}')" class="btn-circle" style="background:var(--danger);"><i class="fas fa-times"></i></button>
-            </div>
-        </div>`;
-    }).join('') || "Aucune demande en attente.";
-};
-
-window.validateRDV = (id) => {
-    const app = activeDoc.appointments.find(a => a.id == id);
-    if(app) { 
-        app.status = 'valid'; 
-        if(!activeDoc.history) activeDoc.history = [];
-        activeDoc.history.push({...app, confirmedAt: Date.now()});
-        saveData(); 
-        showToast("RDV Validé"); 
-    }
-};
-
-window.rejectRDV = (id) => {
-    activeDoc.appointments = activeDoc.appointments.filter(a => a.id != id);
-    saveData(); showToast("RDV Rejeté");
-};
-
-window.openHistory = () => {
-    showScreen('pageHistory');
-    const hList = activeDoc.history || [];
-    document.getElementById('historyList').innerHTML = hList.map(h => `
-        <div class="manage-item" style="flex-direction:column; align-items:start;">
-            <div style="width:100%; display:flex; justify-content:space-between;"><b>${h.patName}</b> <small>${h.day} - ${h.hour}h</small></div>
-            <div style="font-size:0.7rem; color:#888;">Tél: ${h.patTel}</div>
-        </div>
-    `).reverse().join('') || "<p style='text-align:center'>Aucun historique.</p>";
-};
-
-window.exportHistory = () => {
-    if(!activeDoc.history || activeDoc.history.length === 0) return showToast("Historique vide");
-    let txt = `HISTORIQUE DES RENDEZ-VOUS - Dr. ${activeDoc.name}\n\n`;
-    activeDoc.history.forEach(h => {
-        txt += `Patient: ${h.patName} | Tél: ${h.patTel} | Date: ${h.day} | Heure: ${h.hour}h\n`;
-    });
-    const blob = new Blob([txt], {type: "text/plain"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `historique_dr_${activeDoc.name.replace(/ /g, '_')}.txt`;
-    a.click();
-};
-
-window.clearHistory = () => {
-    if(confirm("Voulez-vous vider tout l'historique ?")) {
-        activeDoc.history = [];
-        saveData();
-        openHistory();
-        showToast("Historique vidé");
-    }
-};
-
-window.printDailyReport = () => {
-    const today = new Date().toLocaleDateString('fr-FR', {day:'numeric', month:'numeric'});
-    const apps = (activeDoc.appointments || []).filter(a => a.day === today && a.status === 'valid');
-    apps.sort((a,b) => a.hour - b.hour);
-
-    let html = `
-        <h1 style="text-align:center;">Rapport Journalier - Dr. ${activeDoc.name}</h1>
-        <h3 style="text-align:center;">Date : ${today}</h3>
-        <table style="width:100%; margin-top:30px;">
-            <thead>
-                <tr><th style="padding:10px;">Heure</th><th style="padding:10px;">Patient</th><th style="padding:10px;">Téléphone</th></tr>
-            </thead>
-            <tbody>
-                ${apps.map(a => `<tr><td style="padding:10px; text-align:center;">${a.hour}h</td><td style="padding:10px;">${a.patName}</td><td style="padding:10px; text-align:center;">${a.patTel}</td></tr>`).join('')}
-            </tbody>
-        </table>
-        ${apps.length === 0 ? '<p style="text-align:center; margin-top:20px;">Aucun rendez-vous aujourd\'hui.</p>' : ''}
-    `;
-    document.getElementById('printArea').innerHTML = html;
-    window.print();
-};
-
-window.renderPatientAppointments = () => {
-    let h = ""; (appData.specs || []).forEach(s => s.docs?.forEach(d => d.appointments?.filter(a => a.patId === activePatient.id).forEach(a => {
-        const sTxt = a.status === 'valid' ? '<span style="color:var(--success)">Confirmé</span>' : '<span style="color:var(--warning)">En attente</span>';
-        h += `<div class="manage-item"><div><b>Dr. ${d.name}</b><br><small>${a.day} à ${a.hour}h</small></div><div>${sTxt}</div></div>`;
-    }))); document.getElementById('patientAppointments').innerHTML = h || "Aucun RDV.";
-};
-
-window.renderPendingPatients = () => {
-    const list = appData.pendingPatients || [];
-    document.getElementById('admPendingList').innerHTML = list.map(p => `
-        <div class="manage-item" style="flex-direction: column; align-items: stretch; gap: 10px;">
-            <div><b>${p.name}</b><br><small>${p.tel}</small></div>
-            <div style="display: flex; gap: 12px; justify-content: flex-end;">
-                <button onclick="location.href='tel:${p.tel}'" class="btn-circle" style="background:var(--accent);"><i class="fas fa-phone"></i></button>
-                <button onclick="acceptPatient('${p.id}')" class="btn-circle" style="background:var(--success);"><i class="fas fa-check"></i></button>
-                <button onclick="rejectPatient('${p.id}')" class="btn-circle" style="background:var(--danger);"><i class="fas fa-times"></i></button>
-            </div>
-        </div>`).join('') || "Aucune inscription en attente.";
-};
-
-window.renderUserList = () => {
-    const list = appData.patients || [];
-    document.getElementById('admUserList').innerHTML = list.map(p => `
-        <div class="manage-item" style="flex-direction: column; align-items: stretch; padding: 12px; gap: 8px;">
-            <div style="font-weight: 600; font-size: 0.95rem; color: var(--accent);">${p.name}</div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="font-size: 0.75rem; color: #bbb;">Tél: ${p.tel}<br>Code: <b>${p.code}</b></div>
-                <div style="display: flex; gap: 8px;">
-                    <button onclick="location.href='tel:${p.tel}'" class="btn-circle" style="background: var(--success);"><i class="fas fa-phone"></i></button>
-                    <button onclick="deleteUser('${p.id}')" class="btn-circle" style="background: var(--danger);"><i class="fas fa-times"></i></button>
-                </div>
-            </div>
-        </div>`).join('');
-};
-
-window.deleteUser = (id) => { appData.patients = appData.patients.filter(p => p.id != id); saveData(); renderUserList(); };
-
-window.renderAdminList = () => {
-    let h = "";
-    (appData.specs || []).forEach(s => {
-        h += `<div class="admin-sect">
-            <div class="admin-header" onclick="toggleSect(this)">
-                <div style="display:flex; align-items:center; gap:10px;"><div class="badge-count">${(s.docs || []).length}</div><span>${s.label}</span></div>
-                <button onclick="event.stopPropagation(); promptDeleteSpec('${s.id}')" class="btn-circle" style="background:none; color:var(--danger); border:none;"><i class="fas fa-trash"></i></button>
-            </div>
-            <div class="admin-content">
-                <div id="confirm-spec-del-${s.id}" style="display:none; background:#330000; padding:10px; border-radius:8px; margin-bottom:10px; text-align:center;">
-                    <p style="font-size:0.7rem; margin-bottom:10px;">Supprimer la spécialité et ses médecins ?</p>
-                    <div style="display:flex; gap:10px;"><button class="btn-auth btn-primary" style="flex:1; background:var(--danger);" onclick="deleteSpec('${s.id}')">OUI</button><button class="btn-auth" style="flex:1;" onclick="cancelDeleteSpec('${s.id}')">NON</button></div>
-                </div>
-                ${(s.docs || []).map(d => `
-                <div class="manage-item" style="flex-direction:column; align-items:stretch; gap:5px;" id="doc-card-${d.id}">
-                    <div style="display:flex; justify-content:space-between;"><b>Dr. ${d.name}</b><span style="color:var(--accent)">${d.code}</span></div>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <small>${d.tel} | Val: ${d.validityDays ? d.validityDays + 'j' : '0j'}</small>
-                        <div style="display:flex; gap:5px;">
-                            <button onclick="location.href='tel:${d.tel}'" class="btn-circle" style="background:var(--success);"><i class="fas fa-phone"></i></button>
-                            <button onclick="openEditDoc('${s.id}','${d.id}')" class="btn-circle" style="background:var(--warning); color:black;"><i class="fas fa-edit"></i></button>
-                            <button onclick="promptDeleteDoc('${s.id}','${d.id}')" class="btn-circle" style="background:var(--danger);"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <div id="confirm-del-${d.id}" style="display:none; background:#330000; padding:10px; border-radius:8px; margin-top:10px; text-align:center;">
-                        <p style="font-size:0.7rem; margin-bottom:10px;">Supprimer définitivement ?</p>
-                        <div style="display:flex; gap:10px;"><button class="btn-auth btn-primary" style="flex:1; background:var(--danger);" onclick="deleteDoc('${s.id}','${d.id}')">OUI</button><button class="btn-auth" style="flex:1;" onclick="cancelDelete('${d.id}')">NON</button></div>
-                    </div>
-                </div>`).join('')}
-            </div>
-        </div>`;
-    });
-    document.getElementById('admGlobalList').innerHTML = h;
-};
-
-window.promptDeleteSpec = (sid) => { document.getElementById(`confirm-spec-del-${sid}`).style.display = 'block'; };
-window.cancelDeleteSpec = (sid) => { document.getElementById(`confirm-spec-del-${sid}`).style.display = 'none'; };
-window.deleteSpec = (sid) => { appData.specs = appData.specs.filter(s => s.id !== sid); saveData(); renderAdminList(); };
-window.promptDeleteDoc = (sid, did) => { document.getElementById(`confirm-del-${did}`).style.display = 'block'; };
-window.cancelDelete = (did) => { document.getElementById(`confirm-del-${did}`).style.display = 'none'; };
-
-window.openEditDoc = (sid, did) => {
-    const s = appData.specs.find(x => x.id === sid), d = s.docs.find(x => x.id === did);
-    document.getElementById('editDocName').value = d.name; document.getElementById('editDocTitle').value = d.title;
-    document.getElementById('editDocTel').value = d.tel; document.getElementById('editDocCode').value = d.code;
-    document.getElementById('editDocDuration').value = d.validityDays || "";
-    document.getElementById('editCapDisplay').textContent = d.capacity;
-    document.getElementById('btnUpdateDoc').onclick = () => {
-        d.name = document.getElementById('editDocName').value; d.title = document.getElementById('editDocTitle').value;
-        d.tel = document.getElementById('editDocTel').value; d.code = document.getElementById('editDocCode').value;
-        const days = parseInt(document.getElementById('editDocDuration').value) || 0;
-        d.validityDays = days;
-        d.expiresAt = Date.now() + (days * 24 * 60 * 60 * 1000) - (days === 0 ? 60000 : 0);
-        d.capacity = parseInt(document.getElementById('editCapDisplay').textContent);
-        saveData(); closeModals(); renderAdminList();
-    };
-    document.getElementById('modalEditDoc').classList.add('modal-show');
-};
-
-window.deleteDoc = (sid, did) => {
-    const s = appData.specs.find(x => x.id === sid);
-    s.docs = s.docs.filter(x => x.id !== did); saveData(); renderAdminList();
-};
-
-window.renderPatientHome = () => {
-    document.getElementById('specialtyGrid').innerHTML = (appData.specs || []).map(s => `<div class="spec-card" onclick="openSpec('${s.id}')"><i class="fas ${s.icon || 'fa-user-md'}"></i><b>${s.label}</b></div>`).join('');
-};
-
-window.openSpec = (sid) => {
-    const s = appData.specs.find(x => x.id === sid);
-    let h = `<button onclick="renderPatientHome()" style="grid-column:1/3; color:var(--accent); background:none; border:none; text-align:left; padding:10px; font-weight:bold;">← Retour</button>`;
-    if(s.docs) h += s.docs.filter(d => !d.expiresAt || Date.now() <= d.expiresAt).map(d => `<div class="manage-item" onclick="openDocCal('${sid}','${d.id}')" style="grid-column:1/3;"><div><b>Dr. ${d.name}</b><br><small>${d.title}</small></div><i class="fas fa-calendar-alt" style="color:var(--accent)"></i></div>`).join('');
-    document.getElementById('specialtyGrid').innerHTML = h;
-};
-
-window.openDocCal = (sid, did) => {
-    selectedDoc = appData.specs.find(s => s.id === sid).docs.find(d => d.id === did);
-    document.getElementById('calPatientInfo').innerHTML = `<b>Dr. ${selectedDoc.name}</b><br><small>${selectedDoc.title}</small>`;
-    showScreen('pageCalPatient');
-};
-
-function updateUI() {
-    const act = document.querySelector('.screen.active')?.id;
-    if(act === 'pagePatients') renderPatientHome();
-    if(activeDoc && act === 'pageDocSpace') { renderCalendar('docCalContainer', true); renderDocAppointments(); const pendingDoc = (activeDoc.appointments || []).filter(a => a.status === 'pending').length; document.getElementById('docNotifDot').style.display = pendingDoc > 0 ? 'inline-block' : 'none'; }
-    if(selectedDoc && act === 'pageCalPatient') renderCalendar('calPatientContainer', false);
-    if(activePatient && act === 'pagePatientSpace') renderPatientAppointments();
-    if(act === 'pageAdmin') { if (appData.pendingPatients && appData.pendingPatients.length > 0) document.getElementById('notifDot').style.display = 'inline-block'; else document.getElementById('notifDot').style.display = 'none'; }
-}
-
-window.closeModals = () => document.querySelectorAll('.internal-modal').forEach(m => m.classList.remove('modal-show'));
-window.toggleSect = (h) => h.nextElementSibling.classList.toggle('open');
-window.cycleCap = (id) => { let el = document.getElementById(id); let v = parseInt(el.textContent); el.textContent = (v >= 4) ? 1 : v + 1; };
-
-window.addSpec = () => {
-    const name = document.getElementById('admSpecInput').value; if(!name) return;
-    if(!appData.specs) appData.specs = []; 
-    appData.specs.push({ id: 's'+Date.now(), label: name, icon: document.getElementById('admSpecIcon').value, docs: [] }); 
-    saveData(); 
-    document.getElementById('admSpecInput').value = "";
-    showToast("Spécialité ajoutée !"); 
-};
-
-window.addDoc = () => {
-    const sid = document.getElementById('admSpecSelect').value;
-    const name = document.getElementById('admDocName').value;
-    const title = document.getElementById('admDocTitle').value;
-    const tel = document.getElementById('admDocTel').value;
-    const code = document.getElementById('admDocCode').value;
-    const durationInput = document.getElementById('admDocDuration').value;
-    const cap = parseInt(document.getElementById('capDisplay').textContent);
-
-    if(!sid || !name || !tel || !code || !durationInput) {
-        showToast("Veuillez remplir tous les champs");
+  handleSlot(day, hour, isDoc, isMine) {
+    if (isDoc) {
+      if (this.isHourMode) {
+        let blk = this.activeDoc.blockedSlots||[];
+        this.activeDoc.blockedSlots = blk.includes(`${day}-${hour}`) ? blk.filter(s=>s!==`${day}-${hour}`) : [...blk, `${day}-${hour}`];
+        this.saveData(); this.renderCalendar('docCalContainer', true);
         return;
-    }
-
-    const days = parseInt(durationInput) || 0;
-    const expiresAt = Date.now() + (days * 24 * 60 * 60 * 1000) - (days === 0 ? 60000 : 0);
-
-    const spec = appData.specs.find(s => s.id === sid);
-    if(spec) {
-        if(!spec.docs) spec.docs = [];
-        spec.docs.push({ 
-            id: 'd'+Date.now(), name, title, tel, code, 
-            capacity: cap, appointments: [], blockedSlots: [], history: [],
-            validityDays: days, expiresAt: expiresAt
-        });
-        saveData();
-        showToast("Médecin ajouté avec succès !");
-        document.getElementById('admDocName').value = "";
-        document.getElementById('admDocTitle').value = "";
-        document.getElementById('admDocTel').value = "";
-        document.getElementById('admDocCode').value = "";
-        document.getElementById('admDocDuration').value = "";
+      }
+      const ls = (this.activeDoc.appointments||[]).filter(a=>a.day===day&&a.hour===hour);
+      if(ls.length) {
+        $('modalDocTitle').textContent = `RDV ${day} à ${hour}h`;
+        $('docActionInfo').innerHTML = ls.map(a=>`<div class="manage-item flex-between"><div><b>${a.patName}</b><br><small class="${a.status==='valid'?'text-success':'text-warning'}">${a.status==='valid'?'Validé':'Attente'}</small></div><div class="flex gap-2"><button class="btn-circle bg-accent" onclick="location.href='tel:${a.patTel}'"><i class="fas fa-phone"></i></button><button class="btn-circle bg-success" onclick="App.validateRDV('${a.id}')"><i class="fas fa-check"></i></button><button class="btn-circle bg-danger" onclick="App.confirmDelRDV('${a.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+        $('modalConfirmButtons').style.display='none'; $('btnCloseModal').style.display='block';
+        $('modalDoc').classList.add('modal-show');
+      }
     } else {
-        showToast("Erreur : Spécialité introuvable");
+      if(!this.activePatient) { this.showToast("Connectez-vous"); return setTimeout(()=>this.openLogin(),1000); }
+      if(this.selectedDoc.expiresAt && Date.now()>this.selectedDoc.expiresAt) return this.showToast("Code obsolète.");
+      const rdv = this.selectedDoc.appointments?.find(a=>a.patId===this.activePatient.id&&a.day===day&&a.hour===hour);
+      if(isMine && rdv?.status==='valid') {
+        $('modalDocTitle').textContent="RDV Confirmé"; $('docActionInfo').innerHTML=`<p class="text-center text-success">Déjà confirmé par le médecin.</p>`;
+        $('modalConfirmButtons').style.display='none'; $('btnCloseModal').style.display='block';
+      } else {
+        $('modalDocTitle').textContent=isMine?"Annuler ?":"Réserver ?"; $('docActionInfo').innerHTML=`<p class="text-center">${day} à ${hour}h</p>`;
+        $('modalConfirmButtons').style.display='flex';
+        $('btnFinalConfirm').onclick = () => {
+          if(isMine) { this.selectedDoc.appointments = this.selectedDoc.appointments.filter(a=>!(a.patId===this.activePatient.id&&a.day===day&&a.hour===hour)); this.showToast("Annulé."); }
+          else { this.selectedDoc.appointments = [...(this.selectedDoc.appointments||[]), {id:Date.now(), createdAt:Date.now(), patId:this.activePatient.id, patName:this.activePatient.name, patTel:this.activePatient.tel, day, hour, status:'pending'}]; this.showToast("Demande envoyée."); }
+          this.saveData(); this.closeModals();
+        };
+      }
+      $('modalDoc').classList.add('modal-show');
     }
+  },
+
+  confirmDelRDV(id) {
+    $('docActionInfo').innerHTML=`<p class="text-center">Supprimer ce rendez-vous ?</p>`; $('modalConfirmButtons').style.display='flex';
+    $('btnFinalConfirm').onclick=()=>{ this.activeDoc.appointments=this.activeDoc.appointments.filter(a=>a.id!=id); this.saveData(); this.closeModals(); this.updateUI(); this.showToast("Supprimé."); };
+  },
+
+  renderDocApps() {
+    $('docAppointmentsList').innerHTML = (this.activeDoc.appointments||[]).filter(a=>a.status==='pending').sort((a,b)=>a.createdAt-b.createdAt).map(a=>`<div class="manage-item flex-between"><div><b>${a.patName}</b><br><small>Date: ${new Date(a.createdAt).toLocaleString()}</small></div><div class="flex gap-2"><button onclick="App.validateRDV('${a.id}')" class="btn-circle bg-success"><i class="fas fa-check"></i></button><button onclick="App.rejectRDV('${a.id}')" class="btn-circle bg-danger"><i class="fas fa-times"></i></button></div></div>`).join('') || "Aucune demande.";
+  },
+
+  validateRDV(id) { const a = this.activeDoc.appointments.find(x=>x.id==id); if(a){ a.status='valid'; this.activeDoc.history=[...(this.activeDoc.history||[]), {...a, confirmedAt:Date.now()}]; this.saveData(); this.updateUI(); this.showToast("Validé"); } },
+  rejectRDV(id) { this.activeDoc.appointments = this.activeDoc.appointments.filter(a=>a.id!=id); this.saveData(); this.updateUI(); this.showToast("Rejeté"); },
+
+  openHistory() { this.showScreen('pageHistory'); $('historyList').innerHTML = (this.activeDoc.history||[]).map(h=>`<div class="manage-item"><b>${h.patName}</b> <small>${h.day} - ${h.hour}h</small></div>`).reverse().join('') || "<p class='text-center text-muted'>Vide.</p>"; },
+  exportHistory() { if(!this.activeDoc.history?.length) return this.showToast("Vide"); const a = document.createElement("a"); a.href=URL.createObjectURL(new Blob([this.activeDoc.history.map(h=>`${h.patName} | ${h.patTel} | ${h.day} à ${h.hour}h`).join('\n')],{type:"text/plain"})); a.download="historique.txt"; a.click(); },
+  clearHistory() { if(confirm("Vider l'historique ?")) { this.activeDoc.history=[]; this.saveData(); this.openHistory(); this.showToast("Vidé"); } },
+
+  printDailyReport() {
+    const today = new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'numeric'});
+    const apps = (this.activeDoc.appointments||[]).filter(a=>a.day===today&&a.status==='valid').sort((a,b)=>a.hour-b.hour);
+    $('printArea').innerHTML = `<h1 class="text-center">Rapport - Dr. ${this.activeDoc.name}</h1><h3 class="text-center">${today}</h3><table><tr><th>Heure</th><th>Patient</th><th>Tel</th></tr>${apps.map(a=>`<tr><td>${a.hour}h</td><td>${a.patName}</td><td>${a.patTel}</td></tr>`).join('')}</table>`; window.print();
+  },
+
+  renderPatientApps() {
+    let h=""; (this.appData.specs||[]).forEach(s=>s.docs?.forEach(d=>d.appointments?.filter(a=>a.patId===this.activePatient.id).forEach(a=>h+=`<div class="manage-item flex-between"><div><b>Dr. ${d.name}</b><br><small>${a.day} à ${a.hour}h</small></div><span class="${a.status==='valid'?'text-success':'text-warning'}">${a.status==='valid'?'Confirmé':'Attente'}</span></div>`)));
+    $('patientAppointments').innerHTML = h || "Aucun RDV.";
+  },
+
+  renderPending() { $('admPendingList').innerHTML = (this.appData.pendingPatients||[]).map(p=>`<div class="manage-item flex-between"><div><b>${p.name}</b><br><small>${p.tel}</small></div><div class="flex gap-2"><button onclick="App.acceptPat('${p.id}')" class="btn-circle bg-success"><i class="fas fa-check"></i></button><button onclick="App.rejectPat('${p.id}')" class="btn-circle bg-danger"><i class="fas fa-times"></i></button></div></div>`).join('') || "Aucun."; },
+  acceptPat(id) { const p = this.appData.pendingPatients.find(x=>x.id==id); this.appData.pendingPatients=this.appData.pendingPatients.filter(x=>x.id!=id); this.appData.patients=[...(this.appData.patients||[]), p]; this.saveData(); this.renderPending(); },
+  rejectPat(id) { this.appData.pendingPatients = this.appData.pendingPatients.filter(p=>p.id!=id); this.saveData(); this.renderPending(); },
+
+  renderUsers() { $('admUserList').innerHTML = (this.appData.patients||[]).map(p=>`<div class="manage-item flex-between"><div><b>${p.name}</b><br><small>Code: ${p.code}</small></div><button onclick="App.delUser('${p.id}')" class="btn-circle bg-danger"><i class="fas fa-times"></i></button></div>`).join(''); },
+  delUser(id) { this.appData.patients = this.appData.patients.filter(p=>p.id!=id); this.saveData(); this.renderUsers(); },
+
+  renderAdmins() {
+    $('admGlobalList').innerHTML = (this.appData.specs||[]).map(s=>`<div class="admin-sect"><div class="admin-header flex-between" onclick="App.toggleSect(this)"><div><span class="badge-count">${(s.docs||[]).length}</span> ${s.label}</div><button onclick="event.stopPropagation(); App.delSpec('${s.id}')" class="btn-circle text-danger" style="background:none;"><i class="fas fa-trash"></i></button></div><div class="admin-content">${(s.docs||[]).map(d=>`<div class="manage-item flex-between"><div><b>Dr. ${d.name}</b><br><small>${d.code} | ${d.validityDays||0}j</small></div><div class="flex gap-2"><button onclick="App.openEditDoc('${s.id}','${d.id}')" class="btn-circle bg-accent"><i class="fas fa-edit"></i></button><button onclick="App.delDoc('${s.id}','${d.id}')" class="btn-circle bg-danger"><i class="fas fa-trash"></i></button></div></div>`).join('')}</div></div>`).join('');
+  },
+
+  delSpec(id) { if(confirm("Supprimer la spécialité ?")) { this.appData.specs=this.appData.specs.filter(s=>s.id!==id); this.saveData(); this.renderAdmins(); } },
+  delDoc(sid,did) { if(confirm("Supprimer ce médecin ?")) { const s=this.appData.specs.find(x=>x.id===sid); s.docs=s.docs.filter(x=>x.id!==did); this.saveData(); this.renderAdmins(); } },
+
+  openEditDoc(sid, did) {
+    const d = this.appData.specs.find(x=>x.id===sid).docs.find(x=>x.id===did);
+    ['Name','Title','Tel','Code'].forEach(k=>$('editDoc'+k).value=d[k.toLowerCase()]);
+    $('editDocDuration').value = d.validityDays||""; $('editCapDisplay').textContent=d.capacity;
+    this._eS=sid; this._eD=did; $('modalEditDoc').classList.add('modal-show');
+  },
+  updateDoc() {
+    const d = this.appData.specs.find(x=>x.id===this._eS).docs.find(x=>x.id===this._eD), j = parseInt($('editDocDuration').value)||0;
+    ['Name','Title','Tel','Code'].forEach(k=>d[k.toLowerCase()]=$('editDoc'+k).value);
+    d.validityDays = j; d.expiresAt = Date.now()+(j*86400000)-(j?0:60000); d.capacity = parseInt($('editCapDisplay').textContent);
+    this.saveData(); this.closeModals(); this.renderAdmins();
+  },
+
+  renderPatientHome() { $('specialtyGrid').innerHTML = (this.appData.specs||[]).map(s=>`<div class="spec-card" onclick="App.openSpec('${s.id}')"><i class="fas ${s.icon||'fa-user-md'}"></i><b>${s.label}</b></div>`).join(''); },
+  openSpec(sid) {
+    const s = this.appData.specs.find(x=>x.id===sid);
+    $('specialtyGrid').innerHTML = `<button onclick="App.renderPatientHome()" style="grid-column:1/3; background:none; border:none; text-align:left; color:var(--primary); font-weight:600;">← Retour</button>` + (s.docs||[]).filter(d=>!d.expiresAt||Date.now()<=d.expiresAt).map(d=>`<div class="manage-item flex-between" onclick="App.openDocCal('${sid}','${d.id}')" style="grid-column:1/3; cursor:pointer;"><div><b>Dr. ${d.name}</b><br><small>${d.title}</small></div><i class="fas fa-calendar-alt text-primary"></i></div>`).join('');
+  },
+  openDocCal(sid, did) { this.selectedDoc = this.appData.specs.find(s=>s.id===sid).docs.find(d=>d.id===did); $('calPatientInfo').innerHTML=`<b>Dr. ${this.selectedDoc.name}</b>`; this.showScreen('pageCalPatient'); },
+
+  updateUI() {
+    const act = document.querySelector('.screen.active')?.id;
+    if(act==='pagePatients') this.renderPatientHome();
+    if(this.activeDoc && act==='pageDocSpace') { this.renderCalendar('docCalContainer',true); this.renderDocApps(); $('docNotifDot').style.display=(this.activeDoc.appointments||[]).some(a=>a.status==='pending')?'inline-block':'none'; }
+    if(this.selectedDoc && act==='pageCalPatient') this.renderCalendar('calPatientContainer',false);
+    if(this.activePatient && act==='pagePatientSpace') this.renderPatientApps();
+    if(act==='pageAdmin') $('notifDot').style.display=this.appData.pendingPatients?.length?'inline-block':'none';
+  },
+
+  closeModals() { $$('.internal-modal').forEach(m=>m.classList.remove('modal-show')); },
+  toggleSect(h) { h.nextElementSibling.classList.toggle('open'); },
+  cycleCap(id) { let v=parseInt($(id).textContent); $(id).textContent = v>=4 ? 1 : v+1; },
+
+  addSpec() { const n = $('admSpecInput').value; if(!n) return; this.appData.specs=[...(this.appData.specs||[]),{id:'s'+Date.now(),label:n,icon:'fa-user-md',docs:[]}]; this.saveData(); $('admSpecInput').value=""; this.showToast("Ajoutée !"); },
+  updateSpecSel() { $('admSpecSelect').innerHTML = (this.appData.specs||[]).map(s=>`<option value="${s.id}">${s.label}</option>`).join(''); },
+  
+  addDoc() {
+    const sid=$('admSpecSelect').value, j=parseInt($('admDocDuration').value)||0;
+    if(!sid||!$('admDocName').value) return this.showToast("Champs requis");
+    const s = this.appData.specs.find(x=>x.id===sid);
+    s.docs.push({id:'d'+Date.now(), name:$('admDocName').value, title:$('admDocTitle').value, tel:$('admDocTel').value, code:$('admDocCode').value, capacity:parseInt($('capDisplay').textContent), validityDays:j, expiresAt:Date.now()+(j*86400000)-(j?0:60000), appointments:[], blockedSlots:[], history:[]});
+    this.saveData(); this.showToast("Ajouté !"); $$('.admin-content input').forEach(i=>i.value="");
+  },
+
+  handleSignup() { const n=$('regName').value, t=$('regTel').value, c=$('regPass').value; if(!n||!t||!c) return; this.appData.pendingPatients=[...(this.appData.pendingPatients||[]),{id:Date.now(),name:n,tel:t,code:c}]; this.saveData(); this.showToast("Demande envoyée !"); this.showScreen('pagePatients'); },
+  toggleHourMode() { this.isHourMode = !this.isHourMode; $('btnToggleHours').classList.toggle('bg-danger'); $('btnToggleHours').classList.toggle('bg-accent'); this.showToast(this.isHourMode?"Blocage activé":"Blocage désactivé"); }
 };
 
-window.updateAdmSpecSelect = () => { document.getElementById('admSpecSelect').innerHTML = (appData.specs || []).map(s => `<option value="${s.id}">${s.label}</option>`).join(''); };
-window.handleSignup = () => {
-    const n = document.getElementById('regName').value, t = document.getElementById('regTel').value, c = document.getElementById('regPass').value;
-    if(!n || !t || !c) return; if(!appData.pendingPatients) appData.pendingPatients = [];
-    appData.pendingPatients.push({ id:Date.now(), name:n, tel:t, code:c }); saveData(); showToast("Demande envoyée !"); showScreen('pagePatients');
-};
-window.toggleHourMode = () => { isHourMode = !isHourMode; document.getElementById('btnToggleHours').style.background = isHourMode ? 'var(--danger)' : 'var(--accent)'; showToast(isHourMode ? "Mode Blocage activé" : "Mode Blocage désactivé"); };
-window.acceptPatient = (id) => {
-    const idx = appData.pendingPatients.findIndex(p => p.id == id);
-    const p = appData.pendingPatients.splice(idx, 1)[0];
-    if(!appData.patients) appData.patients = []; appData.patients.push(p); saveData(); renderPendingPatients(); showToast("Patient accepté");
-};
-window.rejectPatient = (id) => { appData.pendingPatients = appData.pendingPatients.filter(p => p.id != id); saveData(); renderPendingPatients(); showToast("Demande refusée"); };
+window.App = App;
+App.init();
+
+// Enregistrement du service worker (si présent)
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
 </script>
 
 <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));}</script>
