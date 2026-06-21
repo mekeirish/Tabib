@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <style>
-    /* ===== CSS inchangé (version longue) ===== */
+    /* ===== CSS inchangé (version complète) ===== */
     :root {
       --bg: #ecfdf5; --card: #ffffff; --card-border: #d1fae5;
       --primary: #059669; --primary-light: #10b981; --primary-dark: #047857;
@@ -236,10 +236,18 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 // ===== Firebase =====
-const firebaseConfig = { apiKey:"AIzaSyAHDgrxnfQlvqN4ZfZH2J5qCjEQSoSbq4Y", authDomain:"tabib-380fb.firebaseapp.com", databaseURL:"https://tabib-380fb-default-rtdb.europe-west1.firebasedatabase.app", projectId:"tabib-380fb", storageBucket:"tabib-380fb.firebasestorage.app", messagingSenderId:"788379849606", appId:"1:788379849606:web:4cfd0f8d4184869e811207" };
+const firebaseConfig = {
+  apiKey: "AIzaSyAHDgrxnfQlvqN4ZfZH2J5qCjEQSoSbq4Y",
+  authDomain: "tabib-380fb.firebaseapp.com",
+  databaseURL: "https://tabib-380fb-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "tabib-380fb",
+  storageBucket: "tabib-380fb.firebasestorage.app",
+  messagingSenderId: "788379849606",
+  appId: "1:788379849606:web:4cfd0f8d4184869e811207"
+};
 const db = getDatabase(initializeApp(firebaseConfig));
 const dbRef = ref(db, 'tabibData');
 
@@ -260,33 +268,28 @@ const App = {
   currCode: "", selectedDoc: null, activeDoc: null, activePatient: null, isHourMode: false, navigationHistory: ['pagePatients'],
 
   async init() {
-    // Chargement local
     try { const s = localStorage.getItem('tabibData'); if (s) this.appData = JSON.parse(s) || this.appData; } catch (e){}
 
-    // Écoute Firebase
     onValue(dbRef, async (snap) => {
       if (snap.val()) {
         this.appData = snap.val();
-        // Si adminHash manquant, le générer et sauvegarder
         if (!this.appData.adminHash) {
+          console.log("🔑 Génération du hash admin par défaut...");
           await this.generateAdminHash();
         }
-        this.persistLocally();
-        // Mise à jour des références actives
-        if (this.activeDoc) this.activeDoc = this.appData.specs.flatMap(s=>s.docs||[]).find(d=>d.id===this.activeDoc.id);
-        if (this.selectedDoc) this.selectedDoc = this.appData.specs.flatMap(s=>s.docs||[]).find(d=>d.id===this.selectedDoc.id);
       } else {
-        // Pas de données : initialisation
         this.appData = { specs: [], patients: [], pendingPatients: [], admins: [], adminHash: null, _version: 0 };
+        console.log("🔑 Initialisation Firebase – génération du hash admin...");
         await this.generateAdminHash();
-        this.persistLocally();
       }
+      this.persistLocally();
+      if (this.activeDoc) this.activeDoc = this.appData.specs.flatMap(s=>s.docs||[]).find(d=>d.id===this.activeDoc.id);
+      if (this.selectedDoc) this.selectedDoc = this.appData.specs.flatMap(s=>s.docs||[]).find(d=>d.id===this.selectedDoc.id);
       this.updateUI();
     });
 
     $('btnUpdateDoc').addEventListener('click', () => this.updateDoc());
 
-    // Pavé numérique
     const numpadContainer = $('numpadContainer');
     if (numpadContainer) {
       numpadContainer.innerHTML = `
@@ -303,15 +306,15 @@ const App = {
   async generateAdminHash() {
     const hash = await hashCode('00001747');
     this.appData.adminHash = hash;
-    await this.saveData(); // on attend la sauvegarde
+    await this.saveData();
+    console.log("✅ Hash admin enregistré :", hash);
   },
 
   persistLocally() { try{ localStorage.setItem('tabibData', JSON.stringify(this.appData)); }catch(e){} },
 
-  // === Correction : set() au lieu de update() pour garantir l'écriture de toutes les propriétés ===
   async saveData() {
     this.appData._version = (this.appData._version || 0) + 1;
-    await set(dbRef, this.appData); // set() écrase tout sous tabibData
+    await update(dbRef, this.appData);
     this.persistLocally();
   },
 
@@ -348,7 +351,6 @@ const App = {
     const code = this.currCode;
     if (!code) return this.showToast("Entrez un code");
 
-    // Admin principal
     if (this.appData.adminHash) {
       const hashed = await hashCode(code);
       if (hashed === this.appData.adminHash) {
@@ -356,7 +358,6 @@ const App = {
         this.clearCode();
         return;
       }
-      // Autres admins
       if (this.appData.admins) {
         for (let admin of this.appData.admins) {
           if (await hashCode(code) === admin.hash) {
@@ -368,11 +369,9 @@ const App = {
       }
     }
 
-    // Médecin
     const d = this.appData.specs.flatMap(s=>s.docs||[]).find(x=>x.code === code);
     if(d) { this.activeDoc = d; $('docSpaceName').textContent = "Dr. " + d.name; this.showScreen('pageDocSpace'); this.clearCode(); return; }
 
-    // Patient
     const p = (this.appData.patients||[]).find(x=>x.code === code);
     if(p) { this.activePatient = p; $('patientWelcome').textContent = "Bonjour, " + p.name; this.showScreen('pagePatientSpace'); this.clearCode(); return; }
 
@@ -414,7 +413,38 @@ const App = {
     this.showToast("Admin supprimé.");
   },
 
-  // ===== Le reste du code est strictement inchangé =====
+  // ===== RENDER ADMINS (AMÉLIORÉ) =====
+  renderAdmins() {
+    $('admGlobalList').innerHTML = (this.appData.specs||[]).map(s => {
+      const count = (s.docs||[]).length;
+      return `<div class="admin-sect">
+        <div class="admin-header flex-between" onclick="App.toggleSect(this)">
+          <div>
+            <span style="background: var(--primary); color: white; border-radius: 999px; padding: 2px 14px; font-weight: bold; font-size: 0.9rem; display: inline-block; margin-right: 10px;">${count}</span>
+            <span style="font-weight: 600;">${s.label}</span>
+            ${count > 0 ? `<span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 8px;">${count} médecin${count>1?'s':''}</span>` : ''}
+          </div>
+          <button onclick="event.stopPropagation(); if(confirm('Supprimer la spécialité \\"${s.label}\\" ?')) App.delSpec('${s.id}')" 
+                  style="background: #fee2e2; border: none; color: var(--danger); width: 34px; height: 34px; border-radius: 999px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        <div class="admin-content">
+          ${(s.docs||[]).map(d => `
+            <div class="manage-item flex-between">
+              <div><b>Dr. ${d.name}</b><br><small>${d.code} | ${d.validityDays||0}j</small></div>
+              <div class="flex gap-2">
+                <button onclick="App.openEditDoc('${s.id}','${d.id}')" class="btn-circle bg-accent"><i class="fas fa-edit"></i></button>
+                <button onclick="App.delDoc('${s.id}','${d.id}')" class="btn-circle bg-danger"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  },
+
+  // ===== Le reste du code est inchangé =====
   renderCalendar(cid, isDoc) {
     const doc = isDoc ? this.activeDoc : this.selectedDoc; if (!doc) return;
     const days = Array.from({length:6}, (_,i) => { let d=new Date(); d.setDate(d.getDate()+i); return { l:["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"][d.getDay()], s:d.toLocaleDateString('fr-FR',{day:'numeric',month:'numeric'}) };});
@@ -506,9 +536,7 @@ const App = {
   renderUsers() { $('admUserList').innerHTML = (this.appData.patients||[]).map(p=>`<div class="manage-item flex-between"><div><b>${p.name}</b><br><small>Code: ${p.code}</small></div><button onclick="App.delUser('${p.id}')" class="btn-circle bg-danger"><i class="fas fa-times"></i></button></div>`).join(''); },
   delUser(id) { this.appData.patients = this.appData.patients.filter(p=>p.id!=id); this.saveData(); this.renderUsers(); },
 
-  renderAdmins() {
-    $('admGlobalList').innerHTML = (this.appData.specs||[]).map(s=>`<div class="admin-sect"><div class="admin-header flex-between" onclick="App.toggleSect(this)"><div><span class="badge-count">${(s.docs||[]).length}</span> ${s.label}</div><button onclick="event.stopPropagation(); App.delSpec('${s.id}')" class="btn-circle text-danger" style="background:none;"><i class="fas fa-trash"></i></button></div><div class="admin-content">${(s.docs||[]).map(d=>`<div class="manage-item flex-between"><div><b>Dr. ${d.name}</b><br><small>${d.code} | ${d.validityDays||0}j</small></div><div class="flex gap-2"><button onclick="App.openEditDoc('${s.id}','${d.id}')" class="btn-circle bg-accent"><i class="fas fa-edit"></i></button><button onclick="App.delDoc('${s.id}','${d.id}')" class="btn-circle bg-danger"><i class="fas fa-trash"></i></button></div></div>`).join('')}</div></div>`).join('');
-  },
+  // La fonction renderAdmins() est maintenant définie plus haut (améliorée)
 
   delSpec(id) { if(confirm("Supprimer la spécialité ?")) { this.appData.specs=this.appData.specs.filter(s=>s.id!==id); this.saveData(); this.renderAdmins(); } },
   delDoc(sid,did) { if(confirm("Supprimer ce médecin ?")) { const s=this.appData.specs.find(x=>x.id===sid); s.docs=s.docs.filter(x=>x.id!==did); this.saveData(); this.renderAdmins(); } },
